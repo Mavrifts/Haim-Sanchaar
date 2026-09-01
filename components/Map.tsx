@@ -1,5 +1,7 @@
 'use client';
 
+import { useActiveState } from '@/context/StateContext';
+
 import React, { useEffect, useRef, useState } from 'react';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';

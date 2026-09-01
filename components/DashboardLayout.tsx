@@ -137,7 +137,18 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               HQ Server Connected
             </span>
           </div>
-
+          <div className="flex items-center gap-4">
+  {/* Low-Bandwidth Mode Switch */}
+  <button
+    onClick={() => setLowBandwidth?.(!lowBandwidth)}
+    className="flex items-center gap-2 bg-black/[0.02] border border-black/[0.06] px-3 py-1.5 rounded-full select-none cursor-pointer hover:bg-black/[0.05] transition-all"
+  >
+    <span className={`w-2 h-2 rounded-full ${lowBandwidth ? 'bg-amber-500 animate-pulse' : 'bg-neutral-400'}`} />
+    <span className="text-[11px] font-semibold text-neutral-600">
+      {lowBandwidth ? 'Low-Bandwidth (Field)' : 'Full Satellite'}
+    </span>
+  </button>
+</div>
           <div className="flex items-center gap-4">
             {/* Low-Bandwidth Mode Switch */}
             <div className="flex items-center gap-2 bg-black/[0.02] border border-black/[0.06] px-3 py-1.5 rounded-full select-none">
