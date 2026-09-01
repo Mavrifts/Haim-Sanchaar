@@ -43,6 +43,7 @@ export default function Map({
 }: MapProps) {
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
+  const { lowBandwidth } = useActiveState();
   const markersRef = useRef<L.Marker[]>([]);
 
   // State for active popup village and its dynamic Gemini AI directive
@@ -82,10 +83,16 @@ export default function Map({
       L.control.zoom({ position: 'bottomright' }).addTo(map);
 
       // OpenStreetMap standard clean tile layer (Completely free, no watermarks)
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      }).addTo(map);
+      if (!lowBandwidth) {
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 19,
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        }).addTo(map);
+      } else {
+        // Low-bandwidth mode: Minimalistic styling or blank map, just markers.
+        // We'll set a solid warm background color via CSS for the map container.
+        mapContainerRef.current.style.backgroundColor = '#fdfaf6';
+      }
 
       mapInstanceRef.current = map;
     }
