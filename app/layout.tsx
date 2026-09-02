@@ -15,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'NDRF Disaster Command | Himachal Pradesh Telemetry & AI Evacuation',
-  description: 'National Disaster Response Force tactical operations dashboard with real-time hydrological telemetry from Supabase and Google Gemini AI evacuation briefing.',
+  title: 'Hem Sanchar | Disaster Management Division, Ministry of Home Affairs',
+  description: 'National Disaster Management Division tactical operations dashboard with real-time hydrological telemetry from Supabase and Google Gemini AI evacuation briefing.',
 };
 
 export default function RootLayout({
