@@ -130,55 +130,34 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-400/[0.01] rounded-full blur-[120px] pointer-events-none" />
 
         {/* Top Header Bar */}
-        <header className="h-16 border-b border-black/[0.06] bg-white/80 backdrop-blur-md px-6 md:px-8 flex items-center justify-between shrink-0 z-30">
-          <div className="flex items-center gap-3">
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-emerald-700 border border-emerald-500/20">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500/80" />
-              HQ Server Connected
+        <header className="border-b border-slate-300 bg-white px-6 py-2">
+          <div className="text-center">
+            <h1 className="text-sm font-bold text-slate-900">भारत सरकार | GOVERNMENT OF INDIA</h1>
+            <p className="text-xs font-semibold text-slate-700">National Disaster Management Authority (NDMA) — Hem Sanchar Command</p>
+          </div>
+          <div className="flex justify-between items-center text-[10px] text-slate-500 mt-2">
+            <span>Emergency Helpline: NDRF 1078</span>
+            <span>System Timestamp: {currentTime}</span>
+          </div>
+        </header>
+
+        <header className="h-12 border-b border-slate-200 bg-slate-50 px-6 flex items-center justify-between shrink-0 z-30">
+          <div className="flex items-center gap-4">
+            <span className="flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-bold bg-green-100 text-green-900 border border-green-200">
+              <span className="w-1.5 h-1.5 rounded-full bg-green-600" />
+              HQ Connected
             </span>
           </div>
           <div className="flex items-center gap-4">
-  {/* Low-Bandwidth Mode Switch */}
-  <button
-    onClick={() => setLowBandwidth?.(!lowBandwidth)}
-    className="flex items-center gap-2 bg-black/[0.02] border border-black/[0.06] px-3 py-1.5 rounded-full select-none cursor-pointer hover:bg-black/[0.05] transition-all"
-  >
-    <span className={`w-2 h-2 rounded-full ${lowBandwidth ? 'bg-amber-500 animate-pulse' : 'bg-neutral-400'}`} />
-    <span className="text-[11px] font-semibold text-neutral-600">
-      {lowBandwidth ? 'Low-Bandwidth (Field)' : 'Full Satellite'}
-    </span>
-  </button>
-</div>
-          <div className="flex items-center gap-4">
-            {/* Low-Bandwidth Mode Switch */}
-            <div className="flex items-center gap-2 bg-black/[0.02] border border-black/[0.06] px-3 py-1.5 rounded-full select-none">
-              {lowBandwidth ? (
-                <WifiOff className="w-3.5 h-3.5 text-amber-600" />
-              ) : (
-                <Wifi className="w-3.5 h-3.5 text-neutral-400" />
-              )}
-              <span className="text-[10px] font-semibold text-neutral-600 uppercase tracking-wider">
-                Low-Bandwidth (Field)
-              </span>
-              <button
-                type="button"
-                onClick={() => setLowBandwidth(!lowBandwidth)}
-                className={`relative inline-flex h-4 w-8 shrink-0 cursor-pointer rounded-full border border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                  lowBandwidth ? 'bg-amber-600/20 border-amber-500/20' : 'bg-black/[0.08] border-black/[0.04]'
-                }`}
-                aria-label="Toggle Low-Bandwidth mode"
-              >
-                <span
-                  className={`pointer-events-none inline-block h-3 w-3 transform rounded-full bg-white shadow-xs ring-0 transition duration-200 ease-in-out ${
-                    lowBandwidth ? 'translate-x-4 bg-amber-700' : 'translate-x-0 bg-neutral-400'
-                  }`}
-                />
-              </button>
-            </div>
-
-            <div className="flex items-center gap-2 text-xs font-semibold text-[#86868B] bg-black/[0.02] border border-black/[0.06] px-3.5 py-1.5 rounded-full">
+            <button
+              onClick={() => setLowBandwidth?.(!lowBandwidth)}
+              className="flex items-center gap-2 border border-slate-300 px-3 py-1 rounded text-[11px] font-bold text-slate-700 hover:bg-slate-100"
+            >
+              {lowBandwidth ? 'Low-Bandwidth Mode' : 'Standard Mode'}
+            </button>
+            <div className="flex items-center gap-2 text-xs font-bold text-slate-700 bg-slate-200 border border-slate-300 px-3 py-1 rounded">
               <span>Active:</span>
-              <span className="text-[#1D1D1F] font-bold">{selectedState}</span>
+              <span>{selectedState}</span>
             </div>
           </div>
         </header>
