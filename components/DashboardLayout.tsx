@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { useActiveState } from '@/context/StateContext';
-import { Shield, Radio, Clock, X } from 'lucide-react';
+import { Radio, Clock, X } from 'lucide-react';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -38,26 +38,39 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="flex flex-col min-h-screen bg-slate-100/60 text-slate-800 font-sans antialiased overflow-x-hidden">
-      <header className="bg-white border-b border-slate-200 text-slate-800 px-6 py-3 flex justify-between items-center shrink-0">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-slate-200 rounded-full flex items-center justify-center font-bold text-slate-600 border border-slate-300">
-            <Shield className="w-6 h-6" />
+      <header className="bg-white border-b border-slate-300 px-6 py-3.5 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        {/* Left: Official Seal & Elevated Branding */}
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 rounded bg-slate-100 border border-slate-300 flex items-center justify-center font-bold text-slate-700 text-xs text-center leading-tight">
+            सत्यमेव जयते
           </div>
           <div>
-            <h1 className="text-sm font-bold tracking-wide uppercase text-slate-900">
-              DISASTER MANAGEMENT DIVISION
-            </h1>
-            <p className="text-[10px] text-slate-600 font-semibold uppercase">
-              MINISTRY OF HOME AFFAIRS | GOVERNMENT OF INDIA
-            </p>
-            <p className="text-[10px] text-[#0066b2] font-bold tracking-wider">
-              HEM SANCHAR (हेम संचार) — High-Altitude Telemetry Network
-            </p>
+            <div className="text-[10px] tracking-wider uppercase font-bold text-slate-500">
+              DISASTER MANAGEMENT DIVISION | MINISTRY OF HOME AFFAIRS
+            </div>
+            <div className="flex items-center gap-2">
+              <h1 className="text-2xl font-black tracking-tight text-slate-900 font-serif">
+                HEM SANCHAR <span className="text-lg font-normal text-slate-600">(हेम संचार)</span>
+              </h1>
+              <span className="bg-amber-100 text-amber-800 text-[10px] font-bold px-2 py-0.5 rounded border border-amber-300">
+                NATIONAL HIGH-ALTITUDE TELEMETRY
+              </span>
+            </div>
           </div>
         </div>
-        <div className="border-l border-slate-300 pl-4 text-xs text-slate-700">
-          <p className="font-bold">HELPLINE NUMBERS: 011-23438252 | 011-1070 | NDRF: 1078</p>
-          <p className="font-semibold text-[10px]">System Status: <span className="text-emerald-600 font-bold">ONLINE</span> | Active Nodal Network</p>
+
+        {/* Right: Emergency Contacts & System Status */}
+        <div className="flex items-center gap-6 text-xs text-slate-600 border-l border-slate-200 pl-6 hidden lg:flex">
+          <div>
+            <div className="font-bold text-slate-900">HELPLINE DIRECTORY</div>
+            <div className="font-mono text-[11px] text-slate-600">
+              MHA: 011-23438252 | NDRF: 1078 | SEOC: 1070
+            </div>
+          </div>
+          <div className="flex items-center gap-2 bg-emerald-50 text-emerald-800 px-3 py-1.5 rounded border border-emerald-200 font-semibold">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            SYSTEM ONLINE
+          </div>
         </div>
       </header>
 
