@@ -27,7 +27,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }, []);
 
   const [language, setLanguage] = useState('English');
-  const languages = ['English', 'हिन्दी', 'डोगरी', 'कश्मीरी', 'लाद्दाखी', 'पहाड़ी', 'गढ़वाली', 'বাংলা'];
+  const languages = ['English', 'हिन्दी', 'डोगरी', 'कश्मीरी', 'लाद्दाखी', 'पहाड़ी', 'गढ़वाली'];
 
   // Simplified translations for core UI
   const translations: Record<string, any> = {
@@ -76,6 +76,22 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </div>
           <div className="text-xs text-slate-500 font-mono hidden md:block">| {currentTime}</div>
         </div>
+        {/* Official MHA Leadership Card */}
+        <div className="hidden lg:flex items-center gap-3 border border-slate-300 rounded-lg p-2 bg-white">
+          <div className="w-8 h-10 bg-slate-200 rounded border border-slate-300 shadow-sm flex items-center justify-center overflow-hidden">
+            <img 
+              src="https://www.mha.gov.in/sites/default/files/styles/small_50x50/public/2023-08/AmitShah_Official.jpg" 
+              alt="Shri Amit Shah" 
+              className="w-full h-full object-cover"
+              onError={(e) => (e.currentTarget.style.display = 'none')}
+            />
+          </div>
+          <div className="text-xs">
+            <p className="font-bold text-slate-900 leading-tight">Shri Amit Shah</p>
+            <p className="text-[10px] text-slate-600">Hon'ble Union Home Minister</p>
+          </div>
+        </div>
+
 
         {/* Official MHA Leadership Card */}
         <div className="hidden lg:flex items-center gap-3 border border-slate-300 rounded-lg p-2 bg-white">

@@ -146,6 +146,8 @@ const MULTI_STATE_FALLBACK: VillageData[] = [
       timestamp: new Date().toISOString(),
     },
   },
+  {
+    id: 'HP-01',
     name: 'Old Manali & Club House Ghat',
     district: 'Kullu',
     state: 'Himachal Pradesh',
