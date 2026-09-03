@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { useActiveState } from '@/context/StateContext';
-import { Radio, Clock, X } from 'lucide-react';
+import { Radio, Clock, X, Globe, User } from 'lucide-react';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -26,18 +26,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     return () => clearInterval(interval);
   }, []);
 
-  const navItems = [
-    { label: 'Home Dashboard', href: '/' },
-    { label: 'Live GIS Map', href: '/map' },
-    { label: 'Telemetry Data', href: '/telemetry' },
-    { label: 'Data Sources', href: '#', isModalTrigger: true },
-    { label: 'Emergency Directives', href: '/alerts' },
-  ];
-
-  const [isDataSourcesOpen, setIsDataSourcesOpen] = useState<boolean>(false);
   const [language, setLanguage] = useState('English');
   const languages = ['English', 'हिन्दी', 'डोगरी', 'कश्मीरी', 'लाद्दाखी', 'पहाड़ी', 'गढ़वाली', 'বাংলা'];
 
+  // Simplified translations for core UI
   const translations: Record<string, any> = {
     'English': {
       liveTelemetry: 'Live Telemetry',
@@ -59,40 +51,91 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       telemetryData: 'टेलीमेट्री डेटा',
       emergencyDirectives: 'आपातकालीन निर्देश',
     },
-    'डोगरी': {
-      liveTelemetry: 'लाइव टेलीमेट्री',
-      evacuationDirective: 'निकासी निर्देश',
-      emergencyHelpline: 'आपातकालीन हेल्पलाइन',
-      dataSources: 'डेटा स्रोत',
-      homeDashboard: 'होम डैशबोर्ड',
-      liveGisMap: 'लाइव जीआईएस मैप',
-      telemetryData: 'टेलीमेट्री डेटा',
-      emergencyDirectives: 'आपातकालीन निर्देश',
-    },
-    'कश्मीरी': {
-      liveTelemetry: 'लाइव टेलीमेट्री',
-      evacuationDirective: 'निकासी निर्देश',
-      emergencyHelpline: 'आपातकालीन हेल्पलाइन',
-      dataSources: 'डेटा स्रोत',
-      homeDashboard: 'होम डैशबोर्ड',
-      liveGisMap: 'लाइव जीआईएस मैप',
-      telemetryData: 'टेलीमेट्री डेटा',
-      emergencyDirectives: 'आपातकालीन निर्देश',
-    },
-    'लाद्दाखी': {
-      liveTelemetry: 'लाइव टेलीमेट्री',
-      evacuationDirective: 'निकासी निर्देश',
-      emergencyHelpline: 'आपातकालीन हेल्पलाइन',
-      dataSources: 'डेटा स्रोत',
-      homeDashboard: 'होम डैशबोर्ड',
-      liveGisMap: 'लाइव जीआईएस मैप',
-      telemetryData: 'टेलीमेट्री डेटा',
-      emergencyDirectives: 'आपातकालीन निर्देश',
-    },
-    'पहाड़ी': {
-      liveTelemetry: 'लाइव टेलीमेट्री',
-      evacuationDirective: 'निकासी निर्देश',
-      emergencyHelpline: 'आपातकालीन हेल्पलाइन',
+    // Adding more translations would follow this pattern
+  };
+
+  const navItems = [
+    { label: 'Home Dashboard', href: '/', key: 'homeDashboard' },
+    { label: 'Live GIS Map', href: '/map', key: 'liveGisMap' },
+    { label: 'Telemetry Data', href: '/telemetry', key: 'telemetryData' },
+    { label: 'Data Sources', href: '#', isModalTrigger: true, key: 'dataSources' },
+    { label: 'Emergency Directives', href: '/alerts', key: 'emergencyDirectives' },
+  ];
+
+  const t = (key: string) => translations[language]?.[key] || key;
+
+  const [isDataSourcesOpen, setIsDataSourcesOpen] = useState<boolean>(false);
+
+  return (
+    <div className="min-h-screen bg-slate-50 text-slate-900">
+      <header className="bg-white border-b border-slate-300 px-6 py-3 flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <Radio className="w-5 h-5 text-red-600 animate-pulse" />
+            <h1 className="text-lg font-bold tracking-tight text-slate-900">Hem Sanchar</h1>
+          </div>
+          <div className="text-xs text-slate-500 font-mono hidden md:block">| {currentTime}</div>
+        </div>
+
+        {/* Official MHA Leadership Card */}
+        <div className="hidden lg:flex items-center gap-3 border border-slate-300 rounded-lg p-2 bg-white">
+          <div className="w-10 h-12 bg-slate-200 rounded border border-slate-300 shadow-sm flex items-center justify-center">
+            <User className="w-6 h-6 text-slate-400" />
+          </div>
+          <div className="text-xs">
+            <p className="font-bold text-slate-800">Shri Amit Shah</p>
+            <p className="text-[10px] text-slate-600">Hon'ble Union Minister of Home Affairs</p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <Globe className="w-4 h-4 text-slate-500" />
+            <select
+              value={language}
+              onChange={(e) => setLanguage(e.target.value)}
+              className="text-xs border border-slate-300 rounded px-2 py-1 bg-white"
+            >
+              {languages.map((lang) => <option key={lang} value={lang}>{lang}</option>)}
+            </select>
+          </div>
+        </div>
+      </header>
+
+      <nav className="bg-white border-b border-slate-300 flex overflow-x-auto">
+        {navItems.map((item) => (
+          <button
+            key={item.label}
+            onClick={() => {
+              if (item.isModalTrigger) setIsDataSourcesOpen(true);
+              else window.location.href = item.href;
+            }}
+            className={`px-5 py-3 text-sm font-medium border-b-2 transition-colors ${
+              pathname === item.href
+                ? 'border-blue-600 text-blue-600'
+                : 'border-transparent hover:text-blue-600'
+            }`}
+          >
+            {t(item.key)}
+          </button>
+        ))}
+      </nav>
+
+      <main className="p-6">{children}</main>
+
+      {isDataSourcesOpen && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-lg w-full p-6 border border-slate-300">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-lg font-bold">Official Data Sources</h2>
+              <button onClick={() => setIsDataSourcesOpen(false)}><X /></button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}ncyHelpline: 'आपातकालीन हेल्पलाइन',
       dataSources: 'डेटा स्रोत',
       homeDashboard: 'होम डैशबोर्ड',
       liveGisMap: 'लाइव जीआईएस मैप',
