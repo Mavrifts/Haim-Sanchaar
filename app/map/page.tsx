@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic';
 import { useActiveState } from '@/context/StateContext';
 import { getVillagesByState, DashboardResponse, VillageData } from '@/app/actions';
 import { RefreshCw, Map as MapIcon, Layers } from 'lucide-react';
+import SectorSelector from '@/components/SectorSelector';
 
 // Dynamic import of map component to prevent SSR / Leaflet window errors
 const Map = dynamic(() => import('@/components/Map'), {
@@ -46,6 +47,8 @@ export default function LiveMapPage() {
   const villages = data?.villages || [];
 
   return (
+      <SectorSelector />
+
     <div className="space-y-6 h-full flex flex-col animate-in fade-in duration-300">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div>

@@ -35,9 +35,103 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   ];
 
   const [isDataSourcesOpen, setIsDataSourcesOpen] = useState<boolean>(false);
+  const [language, setLanguage] = useState('English');
+  const languages = ['English', 'हिन्दी', 'डोगरी', 'कश्मीरी', 'लाद्दाखी', 'पहाड़ी', 'गढ़वाली', 'বাংলা'];
 
+  const translations: Record<string, any> = {
+    'English': {
+      liveTelemetry: 'Live Telemetry',
+      evacuationDirective: 'Evacuation Directive',
+      emergencyHelpline: 'Emergency Helpline',
+      dataSources: 'Data Sources',
+      homeDashboard: 'Home Dashboard',
+      liveGisMap: 'Live GIS Map',
+      telemetryData: 'Telemetry Data',
+      emergencyDirectives: 'Emergency Directives',
+    },
+    'हिन्दी': {
+      liveTelemetry: 'लाइव टेलीमेट्री',
+      evacuationDirective: 'निकासी निर्देश',
+      emergencyHelpline: 'आपातकालीन हेल्पलाइन',
+      dataSources: 'डेटा स्रोत',
+      homeDashboard: 'होम डैशबोर्ड',
+      liveGisMap: 'लाइव जीआईएस मानचित्र',
+      telemetryData: 'टेलीमेट्री डेटा',
+      emergencyDirectives: 'आपातकालीन निर्देश',
+    },
+    'डोगरी': {
+      liveTelemetry: 'लाइव टेलीमेट्री',
+      evacuationDirective: 'निकासी निर्देश',
+      emergencyHelpline: 'आपातकालीन हेल्पलाइन',
+      dataSources: 'डेटा स्रोत',
+      homeDashboard: 'होम डैशबोर्ड',
+      liveGisMap: 'लाइव जीआईएस मैप',
+      telemetryData: 'टेलीमेट्री डेटा',
+      emergencyDirectives: 'आपातकालीन निर्देश',
+    },
+    'कश्मीरी': {
+      liveTelemetry: 'लाइव टेलीमेट्री',
+      evacuationDirective: 'निकासी निर्देश',
+      emergencyHelpline: 'आपातकालीन हेल्पलाइन',
+      dataSources: 'डेटा स्रोत',
+      homeDashboard: 'होम डैशबोर्ड',
+      liveGisMap: 'लाइव जीआईएस मैप',
+      telemetryData: 'टेलीमेट्री डेटा',
+      emergencyDirectives: 'आपातकालीन निर्देश',
+    },
+    'लाद्दाखी': {
+      liveTelemetry: 'लाइव टेलीमेट्री',
+      evacuationDirective: 'निकासी निर्देश',
+      emergencyHelpline: 'आपातकालीन हेल्पलाइन',
+      dataSources: 'डेटा स्रोत',
+      homeDashboard: 'होम डैशबोर्ड',
+      liveGisMap: 'लाइव जीआईएस मैप',
+      telemetryData: 'टेलीमेट्री डेटा',
+      emergencyDirectives: 'आपातकालीन निर्देश',
+    },
+    'पहाड़ी': {
+      liveTelemetry: 'लाइव टेलीमेट्री',
+      evacuationDirective: 'निकासी निर्देश',
+      emergencyHelpline: 'आपातकालीन हेल्पलाइन',
+      dataSources: 'डेटा स्रोत',
+      homeDashboard: 'होम डैशबोर्ड',
+      liveGisMap: 'लाइव जीआईएस मैप',
+      telemetryData: 'टेलीमेट्री डेटा',
+      emergencyDirectives: 'आपातकालीन निर्देश',
+    },
+    'गढ़वाली': {
+      liveTelemetry: 'लाइव टेलीमेट्री',
+      evacuationDirective: 'निकासी निर्देश',
+      emergencyHelpline: 'आपातकालीन हेल्पलाइन',
+      dataSources: 'डेटा स्रोत',
+      homeDashboard: 'होम डैशबोर्ड',
+      liveGisMap: 'लाइव जीआईएस मैप',
+      telemetryData: 'टेलीमेट्री डेटा',
+      emergencyDirectives: 'आपातकालीन निर्देश',
+    },
+    'বাংলা': {
+      liveTelemetry: 'লাইভ টেলিমেট্রি',
+      evacuationDirective: 'উচ্ছেদ নির্দেশিকা',
+      emergencyHelpline: 'জরুরি হেল্পলাইন',
+      dataSources: 'তথ্য উৎস',
+      homeDashboard: 'হোম ড্যাশবোর্ড',
+      liveGisMap: 'লাইভ জিআইএস ম্যাপ',
+      telemetryData: 'টেলিমেট্রি তথ্য',
+      emergencyDirectives: 'জরুরি নির্দেশিকা',
+    }
+  };
+
+  const t = translations[language] || translations['English'];
+
+  const translatedNavItems = [
+    { label: t.homeDashboard, href: '/' },
+    { label: t.liveGisMap, href: '/map' },
+    { label: t.telemetryData, href: '/telemetry' },
+    { label: t.dataSources, href: '#', isModalTrigger: true },
+    { label: t.emergencyDirectives, href: '/alerts' },
+  ];
   return (
-    <div className="flex flex-col min-h-screen bg-slate-100/60 text-slate-800 font-sans antialiased overflow-x-hidden">
+    <div className="flex flex-col min-h-screen bg-slate-50 text-slate-900 font-sans antialiased overflow-x-hidden">
       <header className="bg-white border-b border-slate-300 px-6 py-3.5 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         {/* Left: Official Seal & Elevated Branding */}
         <div className="flex items-center gap-4">
@@ -59,24 +153,31 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </div>
         </div>
 
-        {/* Right: Emergency Contacts & System Status */}
-        <div className="flex items-center gap-6 text-xs text-slate-600 border-l border-slate-200 pl-6 hidden lg:flex">
-          <div>
-            <div className="font-bold text-slate-900">HELPLINE DIRECTORY</div>
-            <div className="font-mono text-[11px] text-slate-600">
-              MHA: 011-23438252 | NDRF: 1078 | SEOC: 1070
-            </div>
+        {/* MHA Leadership Card */}
+        <div className="hidden lg:flex items-center gap-3 border border-slate-300 rounded-lg p-2 bg-white">
+          <img src="https://www.mha.gov.in/sites/default/files/styles/leader_image/public/AmitShah_0_1.jpg" alt="Home Minister" className="w-14 h-16 rounded border border-slate-300 object-cover shadow-sm" />
+          <div className="text-xs">
+            <div className="font-bold text-slate-900">Shri Amit Shah — Hon'ble Union Minister of Home Affairs</div>
+            <div className="text-slate-600 font-medium">Directive: Zero Casualty Target during High-Altitude Disasters</div>
           </div>
-          <div className="flex items-center gap-2 bg-emerald-50 text-emerald-800 px-3 py-1.5 rounded border border-emerald-200 font-semibold">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            SYSTEM ONLINE
-          </div>
+        </div>
+
+        {/* Language Selector */}
+        <div className="flex items-center gap-2">
+          <label className="text-xs font-semibold text-slate-500">Language:</label>
+          <select 
+            value={language} 
+            onChange={(e) => setLanguage(e.target.value)}
+            className="text-xs border border-slate-300 rounded px-2 py-1 bg-white focus:ring-1 focus:ring-blue-500 outline-none"
+          >
+            {languages.map(lang => <option key={lang} value={lang}>{lang}</option>)}
+          </select>
         </div>
       </header>
 
       <nav className="bg-[#0066b2] text-white w-full flex items-center justify-between px-6 py-0 shadow-md z-50">
         <div className="flex">
-          {navItems.map((item) => {
+          {translatedNavItems.map((item) => {
             const isActive = pathname === item.href;
             return (
               <button
@@ -123,7 +224,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
       )}
 
-      <main className="flex-1 w-full min-h-screen p-4 md:p-6 bg-slate-100/60">
+      <main className="flex-1 w-full min-h-screen p-4 md:p-6 bg-slate-50">
         {children}
       </main>
 

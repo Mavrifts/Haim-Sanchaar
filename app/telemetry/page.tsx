@@ -23,6 +23,7 @@ import {
   ArrowUpRight
 } from 'lucide-react';
 
+import SectorSelector from '@/components/SectorSelector';
 export default function TelemetryPage() {
   const { selectedState } = useActiveState();
   const [data, setData] = useState<DashboardResponse | null>(null);
@@ -46,6 +47,8 @@ export default function TelemetryPage() {
         setLoading(false);
       }
     });
+      <SectorSelector />
+
   };
 
   useEffect(() => {

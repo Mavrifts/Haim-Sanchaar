@@ -20,6 +20,7 @@ import {
   MapPin
 } from 'lucide-react';
 import Link from 'next/link';
+import SectorSelector from '@/components/SectorSelector';
 
 export default function HomeDashboard() {
   const { selectedState } = useActiveState();
@@ -62,6 +63,8 @@ export default function HomeDashboard() {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-300">
+        <SectorSelector />
+
       {/* Top Welcome & Summary Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>

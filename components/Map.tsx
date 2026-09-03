@@ -33,7 +33,8 @@ interface MapProps {
 const STATE_CENTERS: Record<string, { center: [number, number]; zoom: number }> = {
   'Himachal Pradesh': { center: [31.9, 77.1], zoom: 8 },
   'Uttarakhand': { center: [30.3, 79.2], zoom: 8 },
-  'Assam': { center: [26.4, 93.0], zoom: 7.5 },
+  'Ladakh': { center: [34.1, 77.5], zoom: 7 },
+  'Jammu & Kashmir': { center: [33.7, 75.6], zoom: 7 },
   'ALL': { center: [29.5, 78.5], zoom: 6 },
 };
 
