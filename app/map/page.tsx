@@ -47,9 +47,11 @@ export default function LiveMapPage() {
   const villages = data?.villages || [];
 
   return (
+    <>
       <SectorSelector />
 
-    <div className="space-y-6 h-full flex flex-col animate-in fade-in duration-300">
+      <div className="space-y-6 h-full flex flex-col animate-in fade-in duration-300">
+  
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-[#1D1D1F] flex items-center gap-2">
@@ -82,6 +84,7 @@ export default function LiveMapPage() {
           onSelectVillage={(v) => setSelectedVillage(v)}
         />
       </div>
-    </div>
+      </div>
+    </>
   );
 }
