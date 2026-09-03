@@ -26,12 +26,22 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     return () => clearInterval(interval);
   }, []);
 
-  const [language, setLanguage] = useState('English');
-  const languages = ['English', 'हिन्दी', 'डोगरी', 'कश्मीरी', 'लाद्दाखी', 'पहाड़ी', 'गढ़वाली', 'বাংলা'];
+  const [lang, setLang] = useState('en');
 
-  // Simplified translations for core UI
+  const languages = [
+    { code: 'en', name: 'English' },
+    { code: 'hi', name: 'हिन्दी (Hindi)' },
+    { code: 'doi', name: 'डोगरी (Dogri)' },
+    { code: 'ks', name: 'कश्मीरी (Kashmiri)' },
+    { code: 'lb', name: 'लाद्दाखी (Ladakhi)' },
+    { code: 'pa', name: 'पहाड़ी (Pahari)' },
+    { code: 'gbm', name: 'गढ़वाली (Garhwali)' },
+    { code: 'bn', name: 'বাংলা (Bengali)' },
+  ];
+
+  // Translations for core UI
   const translations: Record<string, any> = {
-    'English': {
+    'en': {
       liveTelemetry: 'Live Telemetry',
       evacuationDirective: 'Evacuation Directive',
       emergencyHelpline: 'Emergency Helpline',
@@ -41,7 +51,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       telemetryData: 'Telemetry Data',
       emergencyDirectives: 'Emergency Directives',
     },
-    'हिन्दी': {
+    'hi': {
       liveTelemetry: 'लाइव टेलीमेट्री',
       evacuationDirective: 'निकासी निर्देश',
       emergencyHelpline: 'आपातकालीन हेल्पलाइन',
@@ -51,19 +61,78 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       telemetryData: 'टेलीमेट्री डेटा',
       emergencyDirectives: 'आपातकालीन निर्देश',
     },
-    // Adding more translations would follow this pattern
+    'doi': {
+      liveTelemetry: 'लाइव टेलीमेट्री',
+      evacuationDirective: 'निकासी निर्देश',
+      emergencyHelpline: 'आपातकालीन हेल्पलाइन',
+      dataSources: 'डेटा स्रोत',
+      homeDashboard: 'होम डैशबोर्ड',
+      liveGisMap: 'लाइव जीआईएस मानचित्र',
+      telemetryData: 'टेलीमेट्री डेटा',
+      emergencyDirectives: 'आपातकालीन निर्देश',
+    },
+    'ks': {
+      liveTelemetry: 'लाइव टेलीमेट्री',
+      evacuationDirective: 'निकासी निर्देश',
+      emergencyHelpline: 'आपातकालीन हेल्पलाइन',
+      dataSources: 'डेटा स्रोत',
+      homeDashboard: 'होम डैशबोर्ड',
+      liveGisMap: 'लाइव जीआईएस मानचित्र',
+      telemetryData: 'टेलीमेट्री डेटा',
+      emergencyDirectives: 'आपातकालीन निर्देश',
+    },
+    'lb': {
+      liveTelemetry: 'लाइव टेलीमेट्री',
+      evacuationDirective: 'निकासी निर्देश',
+      emergencyHelpline: 'आपातकालीन हेल्पलाइन',
+      dataSources: 'डेटा स्रोत',
+      homeDashboard: 'होम डैशबोर्ड',
+      liveGisMap: 'लाइव जीआईएस मानचित्र',
+      telemetryData: 'टेलीमेट्री डेटा',
+      emergencyDirectives: 'आपातकालीन निर्देश',
+    },
+    'pa': {
+      liveTelemetry: 'लाइव टेलीमेट्री',
+      evacuationDirective: 'निकासी निर्देश',
+      emergencyHelpline: 'आपातकालीन हेल्पलाइन',
+      dataSources: 'डेटा स्रोत',
+      homeDashboard: 'होम डैशबोर्ड',
+      liveGisMap: 'लाइव जीआईएस मानचित्र',
+      telemetryData: 'टेलीमेट्री डेटा',
+      emergencyDirectives: 'आपातकालीन निर्देश',
+    },
+    'gbm': {
+      liveTelemetry: 'लाइव टेलीमेट्री',
+      evacuationDirective: 'निकासी निर्देश',
+      emergencyHelpline: 'आपातकालीन हेल्पलाइन',
+      dataSources: 'डेटा स्रोत',
+      homeDashboard: 'होम डैशबोर्ड',
+      liveGisMap: 'लाइव जीआईएस मानचित्र',
+      telemetryData: 'टेलीमेट्री डेटा',
+      emergencyDirectives: 'आपातकालीन निर्देश',
+    },
+    'bn': {
+      liveTelemetry: 'লাইভ টেলিমেট্রি',
+      evacuationDirective: 'ইভাকুয়েশন ডাইরেক্টিভ',
+      emergencyHelpline: 'জরুরী হেল্পলাইন',
+      dataSources: 'ডেটা সোর্স',
+      homeDashboard: 'হোম ড্যাশবোর্ড',
+      liveGisMap: 'লাইভ জিআইএস ম্যাপ',
+      telemetryData: 'টেলিমেট্রি ডেটা',
+      emergencyDirectives: 'জরুরী নির্দেশাবলী',
+    }
   };
 
+  const t = (key: string) => translations[lang]?.[key] || translations['en'][key] || key;
 
   const navItems = [
-    { label: 'Home Dashboard', href: '/', key: 'homeDashboard' },
-    { label: 'Live GIS Map', href: '/map', key: 'liveGisMap' },
-    { label: 'Telemetry Data', href: '/telemetry', key: 'telemetryData' },
-    { label: 'Data Sources', href: '#', isModalTrigger: true, key: 'dataSources' },
-    { label: 'Emergency Directives', href: '/alerts', key: 'emergencyDirectives' },
+    { href: '/', key: 'homeDashboard' },
+    { href: '/map', key: 'liveGisMap' },
+    { href: '/telemetry', key: 'telemetryData' },
+    { href: '#', isModalTrigger: true, key: 'dataSources' },
+    { href: '/alerts', key: 'emergencyDirectives' },
   ];
 
-  const t = (key: string) => translations[language]?.[key] || key;
 
   const [isDataSourcesOpen, setIsDataSourcesOpen] = useState<boolean>(false);
 
@@ -208,22 +277,22 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <div className="flex items-center gap-2">
           <label className="text-xs font-semibold text-slate-500">Language:</label>
           <select 
-            value={language} 
-            onChange={(e) => setLanguage(e.target.value)}
-            className="text-xs border border-slate-300 rounded px-2 py-1 bg-white focus:ring-1 focus:ring-blue-500 outline-none"
+            value={lang} 
+            onChange={(e) => setLang(e.target.value)}
+            className="bg-slate-100 border border-slate-300 text-xs font-semibold rounded px-2 py-1"
           >
-            {languages.map(lang => <option key={lang} value={lang}>{lang}</option>)}
+            {languages.map(l => <option key={l.code} value={l.code}>{l.name}</option>)}
           </select>
         </div>
       </header>
 
       <nav className="bg-[#0066b2] text-white w-full flex items-center justify-between px-6 py-0 shadow-md z-50">
         <div className="flex">
-          {translatedNavItems.map((item) => {
+          {navItems.map((item) => {
             const isActive = pathname === item.href;
             return (
               <button
-                key={item.label}
+                key={item.key}
                 onClick={() => {
                   if (item.isModalTrigger) setIsDataSourcesOpen(true);
                   else window.location.href = item.href;
@@ -234,11 +303,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     : 'hover:bg-[#005a9c]'
                 }`}
               >
-                {item.label}
+                {t(item.key)}
               </button>
             );
           })}
         </div>
+
         <button
           onClick={() => setLowBandwidth?.(!lowBandwidth)}
           className="bg-amber-500 text-slate-900 text-xs font-bold px-3 py-1 rounded shadow-sm hover:bg-amber-400"
