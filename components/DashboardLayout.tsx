@@ -27,7 +27,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }, []);
 
   const [language, setLanguage] = useState('English');
-  const languages = ['English', 'हिन्दी', 'डोगरी', 'कश्मीरी', 'लाद्दाखी', 'पहाड़ी', 'गढ़वाली'];
+  const languages = ['English', 'हिन्दी', 'डोगरी', 'कश्मीरी', 'लाद्दाखी', 'पहाड़ी', 'गढ़वाली', 'বাংলা'];
 
   // Simplified translations for core UI
   const translations: Record<string, any> = {
@@ -54,6 +54,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     // Adding more translations would follow this pattern
   };
 
+
   const navItems = [
     { label: 'Home Dashboard', href: '/', key: 'homeDashboard' },
     { label: 'Live GIS Map', href: '/map', key: 'liveGisMap' },
@@ -79,42 +80,24 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         {/* Official MHA Leadership Card */}
         <div className="hidden lg:flex items-center gap-3 border border-slate-300 rounded-lg p-2 bg-white">
           <div className="w-8 h-10 bg-slate-200 rounded border border-slate-300 shadow-sm flex items-center justify-center overflow-hidden">
-            <img 
-              src="https://www.mha.gov.in/sites/default/files/styles/small_50x50/public/2023-08/AmitShah_Official.jpg" 
-              alt="Shri Amit Shah" 
-              className="w-full h-full object-cover"
-              onError={(e) => (e.currentTarget.style.display = 'none')}
-            />
+             <img src="/amit_shah.jpg" alt="Shri Amit Shah" className="w-full h-full object-cover" />
           </div>
           <div className="text-xs">
-            <p className="font-bold text-slate-900 leading-tight">Shri Amit Shah</p>
-            <p className="text-[10px] text-slate-600">Hon'ble Union Home Minister</p>
+            <p className="font-bold text-slate-900">Shri Amit Shah</p>
+            <p className="text-[10px] text-slate-500">Hon'ble Union Minister of Home Affairs & Minister of Cooperation</p>
           </div>
         </div>
 
-
-        {/* Official MHA Leadership Card */}
-        <div className="hidden lg:flex items-center gap-3 border border-slate-300 rounded-lg p-2 bg-white">
-          <div className="w-10 h-12 bg-slate-200 rounded border border-slate-300 shadow-sm flex items-center justify-center">
-            <User className="w-6 h-6 text-slate-400" />
-          </div>
-          <div className="text-xs">
-            <p className="font-bold text-slate-800">Shri Amit Shah</p>
-            <p className="text-[10px] text-slate-600">Hon'ble Union Minister of Home Affairs</p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <Globe className="w-4 h-4 text-slate-500" />
-            <select
-              value={language}
-              onChange={(e) => setLanguage(e.target.value)}
-              className="text-xs border border-slate-300 rounded px-2 py-1 bg-white"
-            >
-              {languages.map((lang) => <option key={lang} value={lang}>{lang}</option>)}
-            </select>
-          </div>
+        {/* Language Selector */}
+        <div className="flex items-center gap-2">
+          <label className="text-xs font-semibold text-slate-500">Language:</label>
+          <select 
+            value={language} 
+            onChange={(e) => setLanguage(e.target.value)}
+            className="text-xs border border-slate-300 rounded px-2 py-1 bg-white focus:ring-1 focus:ring-blue-500 outline-none"
+          >
+            {languages.map(lang => <option key={lang} value={lang}>{lang}</option>)}
+          </select>
         </div>
       </header>
 
