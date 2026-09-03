@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 
-// Regional Language Translation Dictionary
 const TRANSLATIONS: Record<string, Record<string, string>> = {
   en: {
     title: 'HEM SANCHAR',
@@ -90,45 +89,85 @@ const TRANSLATIONS: Record<string, Record<string, string>> = {
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [lang, setLang] = useState('en');
   const [showDataModal, setShowDataModal] = useState(false);
+  const [emergencyActive, setEmergencyActive] = useState(false);
+
+  const playSiren = () => {
+    try {
+      const AudioContextClass = window.AudioContext || (window as typeof window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+      if (!AudioContextClass) return;
+
+      const audioCtx = new AudioContextClass();
+      const osc1 = audioCtx.createOscillator();
+      const osc2 = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+
+      osc1.type = 'square';
+      osc1.frequency.setValueAtTime(800, audioCtx.currentTime);
+      osc2.type = 'square';
+      osc2.frequency.setValueAtTime(1000, audioCtx.currentTime);
+
+      gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 1);
+
+      osc1.connect(gain);
+      osc2.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      osc1.start();
+      osc2.start();
+      osc1.stop(audioCtx.currentTime + 1);
+      osc2.stop(audioCtx.currentTime + 1);
+      window.setTimeout(() => void audioCtx.close(), 1200);
+    } catch (e) {
+      console.error('AudioContext error', e);
+    }
+  };
+
   const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
+
+  const toggleEmergency = () => {
+    const nextActive = !emergencyActive;
+    setEmergencyActive(nextActive);
+    if (nextActive) playSiren();
+  };
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans antialiased">
-      {/* Top Gold Accent Strip */}
       <div className="h-1 bg-amber-500 w-full" />
 
-      {/* Official Government Header */}
-      <header className="bg-white border-b border-slate-300 px-6 py-3.5 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      {/* Header */}
+      <header className="bg-white border-b border-slate-300 px-6 py-3.5 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
         <div className="flex items-center gap-4">
-          <div className="w-10 h-12 border border-slate-300 bg-slate-50 flex items-center justify-center text-[10px] font-bold text-slate-700 text-center leading-tight p-1">
-            सत्यमेव जयते
+          <div className="w-14 h-14 border border-slate-400 bg-slate-50 flex flex-col items-center justify-center text-[9px] font-bold text-slate-700 text-center leading-tight p-1" aria-label="Official emblem frame">
+            <span className="text-lg leading-none">अशोक</span>
+            <span>सत्यमेव जयते</span>
           </div>
           <div>
-            <p className="text-[10px] tracking-wider uppercase font-bold text-slate-500">
-              {t.subtitle}
-            </p>
-            <h1 className="text-2xl font-black tracking-tight text-slate-900 flex items-center gap-2">
-              {t.title} <span className="text-sm font-normal text-slate-600">(हेम संचार)</span>
-            </h1>
+            <p className="text-[10px] uppercase tracking-widest font-bold text-slate-700">MINISTRY OF HOME AFFAIRS | GOVERNMENT OF INDIA</p>
+            <p className="text-xs text-slate-500 mt-1">National emergency information service</p>
           </div>
         </div>
 
-        {/* Right Section: Minister Card & Language Dropdown */}
+        <div className="text-center lg:absolute lg:left-1/2 lg:-translate-x-1/2">
+          <h1 className="font-serif text-2xl font-bold tracking-tight text-slate-900">
+            HEM SANCHAR <span className="text-base font-normal text-slate-600">(हेम संचार)</span>
+          </h1>
+          <p className="text-[10px] uppercase tracking-widest font-bold text-blue-700">NATIONAL HIGH-ALTITUDE TELEMETRY NETWORK</p>
+        </div>
+
         <div className="flex items-center gap-4">
-          {/* Minister Profile Card */}
-          <div className="hidden lg:flex items-center gap-2 bg-slate-50 border border-slate-200 p-1.5 rounded">
-            <div className="w-10 h-12 rounded border border-slate-300 bg-slate-200 flex items-center justify-center text-[9px] font-bold text-slate-600 text-center">
-              HM
+          <div className="flex items-center gap-2 bg-slate-50 border border-slate-300 p-1.5 rounded">
+            <div className="w-10 h-12 border border-slate-300 bg-slate-200 flex items-center justify-center text-[9px] font-bold text-slate-600 text-center" aria-label="Shri Amit Shah portrait frame">
+              AS
             </div>
             <div>
               <p className="text-xs font-bold text-slate-900 leading-tight">Shri Amit Shah</p>
-              <p className="text-[10px] text-slate-600">Hon'ble Union Home Minister</p>
+              <p className="text-[10px] text-slate-600">Hon&apos;ble Union Home Minister</p>
             </div>
           </div>
 
-          {/* Regional Language Selector */}
           <div className="flex items-center gap-1.5 bg-slate-100 border border-slate-300 rounded px-2 py-1.5">
-            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Language:</span>
+            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Lang:</span>
             <select
               value={lang}
               onChange={(e) => setLang(e.target.value)}
@@ -147,16 +186,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
       </header>
 
-      {/* Primary MHA Blue Navigation Bar */}
+      {/* Nav */}
       <nav className="bg-[#005a9c] text-white px-6 py-2 flex flex-wrap items-center justify-between text-xs font-medium shadow-sm">
         <div className="flex items-center gap-6">
-          <Link href="/" className="hover:text-amber-300 transition-colors font-semibold">
+          <Link className="hover:text-amber-300 transition-colors font-semibold" href="/">
             {t.dashboard}
           </Link>
-          <Link href="/map" className="hover:text-amber-300 transition-colors">
+          <Link className="hover:text-amber-300 transition-colors" href="/map">
             {t.map}
           </Link>
-          <Link href="/telemetry" className="hover:text-amber-300 transition-colors">
+          <Link className="hover:text-amber-300 transition-colors" href="/telemetry">
             {t.telemetry}
           </Link>
           <button
@@ -165,9 +204,17 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           >
             {t.dataSources}
           </button>
-          <Link href="/alerts" className="hover:text-amber-300 transition-colors">
+          <Link className="hover:text-amber-300 transition-colors" href="/alerts">
             {t.emergency}
           </Link>
+          <button
+            onClick={toggleEmergency}
+            aria-pressed={emergencyActive}
+            aria-label="Toggle emergency siren"
+            className={`transition-colors ${emergencyActive ? 'text-amber-300 font-bold' : 'hover:text-amber-300'}`}
+          >
+            Siren
+          </button>
         </div>
 
         <div className="hidden sm:block text-[11px] text-amber-200 font-mono">
@@ -175,28 +222,27 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
       </nav>
 
-      {/* Main Content Area */}
       <main className="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6">{children}</main>
 
-      {/* Interactive Data Sources Modal */}
+      {/* Data Sources Modal */}
       {showDataModal && (
-        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white border border-slate-300 rounded-lg max-w-md w-full p-6 shadow-xl">
-            <h3 className="text-lg font-bold text-slate-900 border-b border-slate-200 pb-2 mb-4">
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" role="presentation" onClick={() => setShowDataModal(false)}>
+          <div className="bg-white border border-slate-300 rounded-lg max-w-md w-full p-6 shadow-xl" role="dialog" aria-modal="true" aria-labelledby="data-sources-title" onClick={(event) => event.stopPropagation()}>
+            <h2 id="data-sources-title" className="text-lg font-bold text-slate-900 border-b border-slate-200 pb-2 mb-4">
               Official Government Data Feeds
-            </h3>
+            </h2>
             <ul className="space-y-3 text-xs text-slate-700">
               <li className="p-2 bg-slate-50 border border-slate-200 rounded">
-                <strong>Central Water Commission (CWC):</strong> River Discharge & Hydrological Gauges
+                <a href="https://cwc.gov.in" target="_blank" rel="noreferrer" className="block text-blue-800 hover:underline"><strong>Central Water Commission (CWC)</strong>: River Discharge & Hydrological Gauges</a>
               </li>
               <li className="p-2 bg-slate-50 border border-slate-200 rounded">
-                <strong>India Meteorological Department (IMD):</strong> Alpine Rainfall & Micro-Climate Telemetry
+                <a href="https://mausam.imd.gov.in" target="_blank" rel="noreferrer" className="block text-blue-800 hover:underline"><strong>India Meteorological Department (IMD)</strong>: Alpine Rainfall & Micro-Climate Telemetry</a>
               </li>
               <li className="p-2 bg-slate-50 border border-slate-200 rounded">
-                <strong>Geological Survey of India (GSI):</strong> Himalayan Slope Stability Sensors
+                <a href="https://gsi.gov.in" target="_blank" rel="noreferrer" className="block text-blue-800 hover:underline"><strong>Geological Survey of India (GSI)</strong>: Himalayan Slope Stability Sensors</a>
               </li>
               <li className="p-2 bg-slate-50 border border-slate-200 rounded">
-                <strong>ISRO / Bhuvan:</strong> High-Resolution Geospatial Base Maps
+                <a href="https://bhuvan.nrsc.gov.in" target="_blank" rel="noreferrer" className="block text-blue-800 hover:underline"><strong>ISRO / Bhuvan</strong>: High-Resolution Geospatial Base Maps</a>
               </li>
             </ul>
             <button
@@ -209,12 +255,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
       )}
 
-      {/* Official Watermark Footer */}
-      <footer className="bg-slate-900 text-slate-300 border-t border-slate-800 text-xs py-4 px-6 text-center mt-auto">
+      {/* Footer */}
+      <footer className="bg-white text-slate-600 border-t border-slate-300 text-xs py-4 px-6 text-center mt-auto">
         <p>
           Designed, Developed, and Maintained for High-Altitude Disaster Mitigation | Hem Sanchar Telemetry Network
         </p>
-        <p className="text-neutral-400 text-[11px] mt-1">
+        <p className="text-slate-500 text-[11px] mt-1">
           Developed with ❤️ by Team Power Puff Girls | Smart India Hackathon 2026
         </p>
       </footer>

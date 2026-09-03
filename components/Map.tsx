@@ -31,11 +31,10 @@ interface MapProps {
 
 // Preset state centers for instant tight centering
 const STATE_CENTERS: Record<string, { center: [number, number]; zoom: number }> = {
-  'Himachal Pradesh': { center: [31.9, 77.1], zoom: 8 },
-  'Uttarakhand': { center: [30.3, 79.2], zoom: 8 },
-  'Ladakh': { center: [34.1, 77.5], zoom: 7 },
-  'Jammu & Kashmir': { center: [33.7, 75.6], zoom: 7 },
-  'ALL': { center: [29.5, 78.5], zoom: 6 },
+  'Himachal Pradesh': { center: [31.1048, 77.1734], zoom: 8 },
+  'Uttarakhand': { center: [30.0668, 79.0193], zoom: 8 },
+  'Jammu & Kashmir': { center: [33.7782, 76.5762], zoom: 7 },
+  'Ladakh': { center: [34.1526, 77.5771], zoom: 7 },
 };
 
 export default function Map({
@@ -75,7 +74,7 @@ export default function Map({
     if (!mapContainerRef.current) return;
 
     if (!mapInstanceRef.current) {
-      const initial = STATE_CENTERS[selectedState] || { center: [31.9, 77.1], zoom: 8 };
+      const initial = STATE_CENTERS[selectedState] || { center: [34.1526, 77.5771], zoom: 7 };
       const map = L.map(mapContainerRef.current, {
         center: initial.center,
         zoom: initial.zoom,
@@ -85,11 +84,11 @@ export default function Map({
       // Add zoom control at bottom-right
       L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-      // OpenStreetMap standard clean tile layer (Completely free, no watermarks)
+      // Use a standard public street basemap with a complete geographic extent.
       if (!lowBandwidth) {
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
           maxZoom: 19,
-          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+          attribution: 'Tiles &copy; Esri',
         }).addTo(map);
       } else {
         // Low-bandwidth mode: Minimalistic styling or blank map, just markers.
@@ -168,7 +167,7 @@ export default function Map({
       } else {
         map.flyToBounds(bounds as L.LatLngBoundsExpression, {
           padding: [60, 60],
-          maxZoom: 9,
+          maxZoom: STATE_CENTERS[selectedState]?.zoom || 8,
           duration: 1.0,
         });
       }
@@ -206,7 +205,7 @@ export default function Map({
       {/* Floating State Info & Legend */}
       <div className="absolute top-4 left-4 z-20 bg-neutral-900/90 border border-neutral-700/70 backdrop-blur-xl rounded-full px-4 py-2 flex items-center gap-2 text-xs font-semibold text-white pointer-events-auto shadow-lg">
         <span className="w-2 h-2 rounded-full bg-[#0071E3] animate-ping" />
-        <span>Focus: {selectedState === 'ALL' ? 'All Active States' : selectedState}</span>
+        <span>Focus: {selectedState}</span>
       </div>
 
       <div className="absolute top-4 right-4 z-20 bg-neutral-900/90 border border-neutral-700/70 backdrop-blur-xl rounded-full px-4 py-2 flex items-center gap-3.5 text-xs font-medium text-neutral-200 pointer-events-auto shadow-lg">

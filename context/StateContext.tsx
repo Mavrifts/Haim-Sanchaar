@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
-export type ActiveState = 'Himachal Pradesh' | 'Uttarakhand' | 'Ladakh' | 'Jammu & Kashmir' | 'ALL';
+export type ActiveState = 'Himachal Pradesh' | 'Uttarakhand' | 'Ladakh' | 'Jammu & Kashmir';
 
 interface StateContextType {
   selectedState: ActiveState;
@@ -24,8 +24,7 @@ export function StateProvider({ children }: { children: ReactNode }) {
       savedState === 'Himachal Pradesh' ||
       savedState === 'Uttarakhand' ||
       savedState === 'Ladakh' ||
-      savedState === 'Jammu & Kashmir' ||
-      savedState === 'ALL'
+      savedState === 'Jammu & Kashmir'
     ) {
       setSelectedState(savedState as ActiveState);
     }
