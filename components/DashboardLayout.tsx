@@ -1,348 +1,222 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { usePathname } from 'next/navigation';
-import { useActiveState } from '@/context/StateContext';
-import { Radio, Clock, X, Globe, User } from 'lucide-react';
+import React, { useState } from 'react';
+import Link from 'next/link';
+
+// Regional Language Translation Dictionary
+const TRANSLATIONS: Record<string, Record<string, string>> = {
+  en: {
+    title: 'HEM SANCHAR',
+    subtitle: 'DISASTER MANAGEMENT DIVISION | MINISTRY OF HOME AFFAIRS',
+    dashboard: 'Home Dashboard',
+    map: 'Live GIS Map',
+    telemetry: 'Telemetry Data',
+    dataSources: 'Data Sources',
+    emergency: 'Emergency Directives',
+    helpline: 'MHA: 011-23438252 | NDRF: 1078 | SEOC: 1070',
+  },
+  hi: {
+    title: 'हेम संचार',
+    subtitle: 'आपदा प्रबंधन प्रभाग | गृह मंत्रालय | भारत सरकार',
+    dashboard: 'मुख्य डैशबोर्ड',
+    map: 'लाइव जीआईएस मानचित्र',
+    telemetry: 'टेलीमेट्री डेटा',
+    dataSources: 'डेटा स्रोत',
+    emergency: 'आपातकालीन निर्देश',
+    helpline: 'एमएचए: 011-23438252 | एनडीआरएफ: 1078 | एसईओसी: 1070',
+  },
+  doi: {
+    title: 'हेम संचार',
+    subtitle: 'आपदा प्रबंधन विभाग | गृह मंत्रालय',
+    dashboard: 'मुख्य डैशबोर्ड',
+    map: 'लाइव जीआईएस नक्शा',
+    telemetry: 'टेलीमेट्री डेटा',
+    dataSources: 'डेटा सोर्स',
+    emergency: 'आपातकालीन निर्देश',
+    helpline: 'एमएचए: 011-23438252 | एनडीआरएफ: 1078',
+  },
+  ks: {
+    title: 'हेम संचार',
+    subtitle: 'आपदा प्रबंधन डिवीजन | गृह मंत्रालय',
+    dashboard: 'अहम डैशबोर्ड',
+    map: 'लाइव नक्शा',
+    telemetry: 'टेलीमेट्री',
+    dataSources: 'डेटा जरिया',
+    emergency: 'हंगामी हिदायत',
+    helpline: 'एमएचए: 011-23438252 | एनडीआरएफ: 1078',
+  },
+  lb: {
+    title: 'हेम संचार',
+    subtitle: 'आपदा प्रबंधन विभाग | गृह मंत्रालय',
+    dashboard: 'डैशबोर्ड',
+    map: 'जीआईएस नक्शा',
+    telemetry: 'टेलीमेट्री',
+    dataSources: 'डेटा',
+    emergency: 'आपातकालीन निर्देश',
+    helpline: 'एमएचए: 011-23438252 | एनडीआरएफ: 1078',
+  },
+  pa: {
+    title: 'हेम संचार',
+    subtitle: 'आपदा प्रबंधन प्रभाग | गृह मंत्रालय',
+    dashboard: 'मुख्य डैशबोर्ड',
+    map: 'लाइव जीआईएस नक्शा',
+    telemetry: 'टेलीमेट्री डेटा',
+    dataSources: 'डेटा स्रोत',
+    emergency: 'आपातकालीन हिदायतां',
+    helpline: 'एमएचए: 011-23438252 | एनडीआरएफ: 1078',
+  },
+  gbm: {
+    title: 'हेम संचार',
+    subtitle: 'आपदा प्रबंधन विभाग | गृह मंत्रालय',
+    dashboard: 'मुख्य डैशबोर्ड',
+    map: 'जीआईएस नक्शा',
+    telemetry: 'टेलीमेट्री डेटा',
+    dataSources: 'डेटा स्रोत',
+    emergency: 'आपातकालीन निर्देश',
+    helpline: 'एमएचए: 011-23438252 | एनडीआरएफ: 1078',
+  },
+  bn: {
+    title: 'হেম সঞ্চার',
+    subtitle: 'দুর্যোগ ব্যবস্থাপনা বিভাগ | স্বরাষ্ট্র মন্ত্রণালয়',
+    dashboard: 'মূল ড্যাশবোর্ড',
+    map: 'লাইভ জিআইএস মানচিত্র',
+    telemetry: 'টেলিমেট্রি ডেটা',
+    dataSources: 'ডেটা উৎস',
+    emergency: 'জরুরী নির্দেশাবলী',
+    helpline: 'এমএইচএ: 011-23438252 | এনডিআরএফ: 1078',
+  },
+};
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
-  const { lowBandwidth, setLowBandwidth } = useActiveState();
-  const [currentTime, setCurrentTime] = useState<string>('');
-
-  useEffect(() => {
-    const updateTime = () => {
-      const now = new Date();
-      setCurrentTime(
-        now.toLocaleDateString('en-US', {
-          weekday: 'short',
-          month: 'short',
-          day: 'numeric',
-        }) + ' • ' + now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false })
-      );
-    };
-    updateTime();
-    const interval = setInterval(updateTime, 1000);
-    return () => clearInterval(interval);
-  }, []);
-
   const [lang, setLang] = useState('en');
-
-  const languages = [
-    { code: 'en', name: 'English' },
-    { code: 'hi', name: 'हिन्दी (Hindi)' },
-    { code: 'doi', name: 'डोगरी (Dogri)' },
-    { code: 'ks', name: 'कश्मीरी (Kashmiri)' },
-    { code: 'lb', name: 'लाद्दाखी (Ladakhi)' },
-    { code: 'pa', name: 'पहाड़ी (Pahari)' },
-    { code: 'gbm', name: 'गढ़वाली (Garhwali)' },
-    { code: 'bn', name: 'বাংলা (Bengali)' },
-  ];
-
-  // Translations for core UI
-  const translations: Record<string, any> = {
-    'en': {
-      liveTelemetry: 'Live Telemetry',
-      evacuationDirective: 'Evacuation Directive',
-      emergencyHelpline: 'Emergency Helpline',
-      dataSources: 'Data Sources',
-      homeDashboard: 'Home Dashboard',
-      liveGisMap: 'Live GIS Map',
-      telemetryData: 'Telemetry Data',
-      emergencyDirectives: 'Emergency Directives',
-    },
-    'hi': {
-      liveTelemetry: 'लाइव टेलीमेट्री',
-      evacuationDirective: 'निकासी निर्देश',
-      emergencyHelpline: 'आपातकालीन हेल्पलाइन',
-      dataSources: 'डेटा स्रोत',
-      homeDashboard: 'होम डैशबोर्ड',
-      liveGisMap: 'लाइव जीआईएस मानचित्र',
-      telemetryData: 'टेलीमेट्री डेटा',
-      emergencyDirectives: 'आपातकालीन निर्देश',
-    },
-    'doi': {
-      liveTelemetry: 'लाइव टेलीमेट्री',
-      evacuationDirective: 'निकासी निर्देश',
-      emergencyHelpline: 'आपातकालीन हेल्पलाइन',
-      dataSources: 'डेटा स्रोत',
-      homeDashboard: 'होम डैशबोर्ड',
-      liveGisMap: 'लाइव जीआईएस मानचित्र',
-      telemetryData: 'टेलीमेट्री डेटा',
-      emergencyDirectives: 'आपातकालीन निर्देश',
-    },
-    'ks': {
-      liveTelemetry: 'लाइव टेलीमेट्री',
-      evacuationDirective: 'निकासी निर्देश',
-      emergencyHelpline: 'आपातकालीन हेल्पलाइन',
-      dataSources: 'डेटा स्रोत',
-      homeDashboard: 'होम डैशबोर्ड',
-      liveGisMap: 'लाइव जीआईएस मानचित्र',
-      telemetryData: 'टेलीमेट्री डेटा',
-      emergencyDirectives: 'आपातकालीन निर्देश',
-    },
-    'lb': {
-      liveTelemetry: 'लाइव टेलीमेट्री',
-      evacuationDirective: 'निकासी निर्देश',
-      emergencyHelpline: 'आपातकालीन हेल्पलाइन',
-      dataSources: 'डेटा स्रोत',
-      homeDashboard: 'होम डैशबोर्ड',
-      liveGisMap: 'लाइव जीआईएस मानचित्र',
-      telemetryData: 'टेलीमेट्री डेटा',
-      emergencyDirectives: 'आपातकालीन निर्देश',
-    },
-    'pa': {
-      liveTelemetry: 'लाइव टेलीमेट्री',
-      evacuationDirective: 'निकासी निर्देश',
-      emergencyHelpline: 'आपातकालीन हेल्पलाइन',
-      dataSources: 'डेटा स्रोत',
-      homeDashboard: 'होम डैशबोर्ड',
-      liveGisMap: 'लाइव जीआईएस मानचित्र',
-      telemetryData: 'टेलीमेट्री डेटा',
-      emergencyDirectives: 'आपातकालीन निर्देश',
-    },
-    'gbm': {
-      liveTelemetry: 'लाइव टेलीमेट्री',
-      evacuationDirective: 'निकासी निर्देश',
-      emergencyHelpline: 'आपातकालीन हेल्पलाइन',
-      dataSources: 'डेटा स्रोत',
-      homeDashboard: 'होम डैशबोर्ड',
-      liveGisMap: 'लाइव जीआईएस मानचित्र',
-      telemetryData: 'टेलीमेट्री डेटा',
-      emergencyDirectives: 'आपातकालीन निर्देश',
-    },
-    'bn': {
-      liveTelemetry: 'লাইভ টেলিমেট্রি',
-      evacuationDirective: 'ইভাকুয়েশন ডাইরেক্টিভ',
-      emergencyHelpline: 'জরুরী হেল্পলাইন',
-      dataSources: 'ডেটা সোর্স',
-      homeDashboard: 'হোম ড্যাশবোর্ড',
-      liveGisMap: 'লাইভ জিআইএস ম্যাপ',
-      telemetryData: 'টেলিমেট্রি ডেটা',
-      emergencyDirectives: 'জরুরী নির্দেশাবলী',
-    }
-  };
-
-  const t = (key: string) => translations[lang]?.[key] || translations['en'][key] || key;
-
-  const navItems = [
-    { href: '/', key: 'homeDashboard' },
-    { href: '/map', key: 'liveGisMap' },
-    { href: '/telemetry', key: 'telemetryData' },
-    { href: '#', isModalTrigger: true, key: 'dataSources' },
-    { href: '/alerts', key: 'emergencyDirectives' },
-  ];
-
-
-  const [isDataSourcesOpen, setIsDataSourcesOpen] = useState<boolean>(false);
+  const [showDataModal, setShowDataModal] = useState(false);
+  const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900">
-      <header className="bg-white border-b border-slate-300 px-6 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <Radio className="w-5 h-5 text-red-600 animate-pulse" />
-            <h1 className="text-lg font-bold tracking-tight text-slate-900">Hem Sanchar</h1>
-          </div>
-          <div className="text-xs text-slate-500 font-mono hidden md:block">| {currentTime}</div>
-        </div>
-        {/* Official MHA Leadership Card */}
-        <div className="hidden lg:flex items-center gap-3 border border-slate-300 rounded-lg p-2 bg-white">
-          <div className="w-8 h-10 bg-slate-200 rounded border border-slate-300 shadow-sm flex items-center justify-center overflow-hidden">
-             <img src="/amit_shah.jpg" alt="Shri Amit Shah" className="w-full h-full object-cover" />
-          </div>
-          <div className="text-xs">
-            <p className="font-bold text-slate-900">Shri Amit Shah</p>
-            <p className="text-[10px] text-slate-500">Hon'ble Union Minister of Home Affairs & Minister of Cooperation</p>
-          </div>
-        </div>
+    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans antialiased">
+      {/* Top Gold Accent Strip */}
+      <div className="h-1 bg-amber-500 w-full" />
 
-        {/* Language Selector */}
-        <div className="flex items-center gap-2">
-          <label className="text-xs font-semibold text-slate-500">Language:</label>
-          <select 
-            value={language} 
-            onChange={(e) => setLanguage(e.target.value)}
-            className="text-xs border border-slate-300 rounded px-2 py-1 bg-white focus:ring-1 focus:ring-blue-500 outline-none"
-          >
-            {languages.map(lang => <option key={lang} value={lang}>{lang}</option>)}
-          </select>
-        </div>
-      </header>
-
-      <nav className="bg-white border-b border-slate-300 flex overflow-x-auto">
-        {navItems.map((item) => (
-          <button
-            key={item.label}
-            onClick={() => {
-              if (item.isModalTrigger) setIsDataSourcesOpen(true);
-              else window.location.href = item.href;
-            }}
-            className={`px-5 py-3 text-sm font-medium border-b-2 transition-colors ${
-              pathname === item.href
-                ? 'border-blue-600 text-blue-600'
-                : 'border-transparent hover:text-blue-600'
-            }`}
-          >
-            {t(item.key)}
-          </button>
-        ))}
-      </nav>
-
-      <main className="p-6">{children}</main>
-
-      {isDataSourcesOpen && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-lg w-full p-6 border border-slate-300">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-bold">Official Data Sources</h2>
-              <button onClick={() => setIsDataSourcesOpen(false)}><X /></button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}ncyHelpline: 'आपातकालीन हेल्पलाइन',
-      dataSources: 'डेटा स्रोत',
-      homeDashboard: 'होम डैशबोर्ड',
-      liveGisMap: 'लाइव जीआईएस मैप',
-      telemetryData: 'टेलीमेट्री डेटा',
-      emergencyDirectives: 'आपातकालीन निर्देश',
-    },
-    'गढ़वाली': {
-      liveTelemetry: 'लाइव टेलीमेट्री',
-      evacuationDirective: 'निकासी निर्देश',
-      emergencyHelpline: 'आपातकालीन हेल्पलाइन',
-      dataSources: 'डेटा स्रोत',
-      homeDashboard: 'होम डैशबोर्ड',
-      liveGisMap: 'लाइव जीआईएस मैप',
-      telemetryData: 'टेलीमेट्री डेटा',
-      emergencyDirectives: 'आपातकालीन निर्देश',
-    },
-    'বাংলা': {
-      liveTelemetry: 'লাইভ টেলিমেট্রি',
-      evacuationDirective: 'উচ্ছেদ নির্দেশিকা',
-      emergencyHelpline: 'জরুরি হেল্পলাইন',
-      dataSources: 'তথ্য উৎস',
-      homeDashboard: 'হোম ড্যাশবোর্ড',
-      liveGisMap: 'লাইভ জিআইএস ম্যাপ',
-      telemetryData: 'টেলিমেট্রি তথ্য',
-      emergencyDirectives: 'জরুরি নির্দেশিকা',
-    }
-  };
-
-  const t = translations[language] || translations['English'];
-
-  const translatedNavItems = [
-    { label: t.homeDashboard, href: '/' },
-    { label: t.liveGisMap, href: '/map' },
-    { label: t.telemetryData, href: '/telemetry' },
-    { label: t.dataSources, href: '#', isModalTrigger: true },
-    { label: t.emergencyDirectives, href: '/alerts' },
-  ];
-  return (
-    <div className="flex flex-col min-h-screen bg-slate-50 text-slate-900 font-sans antialiased overflow-x-hidden">
+      {/* Official Government Header */}
       <header className="bg-white border-b border-slate-300 px-6 py-3.5 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        {/* Left: Official Seal & Elevated Branding */}
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded bg-slate-100 border border-slate-300 flex items-center justify-center font-bold text-slate-700 text-xs text-center leading-tight">
+          <div className="w-10 h-12 border border-slate-300 bg-slate-50 flex items-center justify-center text-[10px] font-bold text-slate-700 text-center leading-tight p-1">
             सत्यमेव जयते
           </div>
           <div>
-            <div className="text-[10px] tracking-wider uppercase font-bold text-slate-500">
-              DISASTER MANAGEMENT DIVISION | MINISTRY OF HOME AFFAIRS
-            </div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-black tracking-tight text-slate-900 font-serif">
-                HEM SANCHAR <span className="text-lg font-normal text-slate-600">(हेम संचार)</span>
-              </h1>
-              <span className="bg-amber-100 text-amber-800 text-[10px] font-bold px-2 py-0.5 rounded border border-amber-300">
-                NATIONAL HIGH-ALTITUDE TELEMETRY
-              </span>
-            </div>
+            <p className="text-[10px] tracking-wider uppercase font-bold text-slate-500">
+              {t.subtitle}
+            </p>
+            <h1 className="text-2xl font-black tracking-tight text-slate-900 flex items-center gap-2">
+              {t.title} <span className="text-sm font-normal text-slate-600">(हेम संचार)</span>
+            </h1>
           </div>
         </div>
 
-        {/* MHA Leadership Card */}
-        <div className="hidden lg:flex items-center gap-3 border border-slate-300 rounded-lg p-2 bg-white">
-          <img src="https://www.mha.gov.in/sites/default/files/styles/leader_image/public/AmitShah_0_1.jpg" alt="Home Minister" className="w-14 h-16 rounded border border-slate-300 object-cover shadow-sm" />
-          <div className="text-xs">
-            <div className="font-bold text-slate-900">Shri Amit Shah — Hon'ble Union Minister of Home Affairs</div>
-            <div className="text-slate-600 font-medium">Directive: Zero Casualty Target during High-Altitude Disasters</div>
+        {/* Right Section: Minister Card & Language Dropdown */}
+        <div className="flex items-center gap-4">
+          {/* Minister Profile Card */}
+          <div className="hidden lg:flex items-center gap-2 bg-slate-50 border border-slate-200 p-1.5 rounded">
+            <div className="w-10 h-12 rounded border border-slate-300 bg-slate-200 flex items-center justify-center text-[9px] font-bold text-slate-600 text-center">
+              HM
+            </div>
+            <div>
+              <p className="text-xs font-bold text-slate-900 leading-tight">Shri Amit Shah</p>
+              <p className="text-[10px] text-slate-600">Hon'ble Union Home Minister</p>
+            </div>
           </div>
-        </div>
 
-        {/* Language Selector */}
-        <div className="flex items-center gap-2">
-          <label className="text-xs font-semibold text-slate-500">Language:</label>
-          <select 
-            value={lang} 
-            onChange={(e) => setLang(e.target.value)}
-            className="bg-slate-100 border border-slate-300 text-xs font-semibold rounded px-2 py-1"
-          >
-            {languages.map(l => <option key={l.code} value={l.code}>{l.name}</option>)}
-          </select>
+          {/* Regional Language Selector */}
+          <div className="flex items-center gap-1.5 bg-slate-100 border border-slate-300 rounded px-2 py-1.5">
+            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Language:</span>
+            <select
+              value={lang}
+              onChange={(e) => setLang(e.target.value)}
+              className="bg-transparent text-slate-800 text-xs font-bold focus:outline-none cursor-pointer"
+            >
+              <option value="en">English</option>
+              <option value="hi">हिन्दी (Hindi)</option>
+              <option value="doi">डोगरी (Dogri)</option>
+              <option value="ks">कश्मीरी (Kashmiri)</option>
+              <option value="lb">लाद्दाखी (Ladakhi)</option>
+              <option value="pa">पहाड़ी (Pahari)</option>
+              <option value="gbm">गढ़वाली (Garhwali)</option>
+              <option value="bn">বাংলা (Bengali)</option>
+            </select>
+          </div>
         </div>
       </header>
 
-      <nav className="bg-[#0066b2] text-white w-full flex items-center justify-between px-6 py-0 shadow-md z-50">
-        <div className="flex">
-          {navItems.map((item) => {
-            const isActive = pathname === item.href;
-            return (
-              <button
-                key={item.key}
-                onClick={() => {
-                  if (item.isModalTrigger) setIsDataSourcesOpen(true);
-                  else window.location.href = item.href;
-                }}
-                className={`px-5 py-3 text-sm font-medium transition-colors ${
-                  isActive
-                    ? 'bg-[#003d6b] font-semibold border-b-2 border-amber-400'
-                    : 'hover:bg-[#005a9c]'
-                }`}
-              >
-                {t(item.key)}
-              </button>
-            );
-          })}
+      {/* Primary MHA Blue Navigation Bar */}
+      <nav className="bg-[#005a9c] text-white px-6 py-2 flex flex-wrap items-center justify-between text-xs font-medium shadow-sm">
+        <div className="flex items-center gap-6">
+          <Link href="/" className="hover:text-amber-300 transition-colors font-semibold">
+            {t.dashboard}
+          </Link>
+          <Link href="/map" className="hover:text-amber-300 transition-colors">
+            {t.map}
+          </Link>
+          <Link href="/telemetry" className="hover:text-amber-300 transition-colors">
+            {t.telemetry}
+          </Link>
+          <button
+            onClick={() => setShowDataModal(true)}
+            className="hover:text-amber-300 transition-colors cursor-pointer"
+          >
+            {t.dataSources}
+          </button>
+          <Link href="/alerts" className="hover:text-amber-300 transition-colors">
+            {t.emergency}
+          </Link>
         </div>
 
-        <button
-          onClick={() => setLowBandwidth?.(!lowBandwidth)}
-          className="bg-amber-500 text-slate-900 text-xs font-bold px-3 py-1 rounded shadow-sm hover:bg-amber-400"
-        >
-          {lowBandwidth ? 'Low-Bandwidth Mode: ON' : 'Low-Bandwidth Mode: OFF'}
-        </button>
+        <div className="hidden sm:block text-[11px] text-amber-200 font-mono">
+          {t.helpline}
+        </div>
       </nav>
 
-      {isDataSourcesOpen && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-lg w-full p-6">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-bold text-slate-800">Official Data Sources</h2>
-              <button onClick={() => setIsDataSourcesOpen(false)} className="text-slate-500 hover:text-slate-800">
-                <X />
-              </button>
-            </div>
-            <ul className="space-y-3 text-sm text-slate-700">
-              <li className="p-3 bg-slate-50 border border-slate-200 rounded"><strong>Central Water Commission (CWC)</strong> — Hydro-gauge & River Discharge Telemetry</li>
-              <li className="p-3 bg-slate-50 border border-slate-200 rounded"><strong>India Meteorological Department (IMD)</strong> — High-Altitude Weather & Rain Gauges</li>
-              <li className="p-3 bg-slate-50 border border-slate-200 rounded"><strong>Geological Survey of India (GSI)</strong> — Himalayan Slope Instability Data</li>
-              <li className="p-3 bg-slate-50 border border-slate-200 rounded"><strong>ISRO / Bhuvan</strong> — High-Resolution Satellite Elevation & Radar Base Maps</li>
+      {/* Main Content Area */}
+      <main className="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6">{children}</main>
+
+      {/* Interactive Data Sources Modal */}
+      {showDataModal && (
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white border border-slate-300 rounded-lg max-w-md w-full p-6 shadow-xl">
+            <h3 className="text-lg font-bold text-slate-900 border-b border-slate-200 pb-2 mb-4">
+              Official Government Data Feeds
+            </h3>
+            <ul className="space-y-3 text-xs text-slate-700">
+              <li className="p-2 bg-slate-50 border border-slate-200 rounded">
+                <strong>Central Water Commission (CWC):</strong> River Discharge & Hydrological Gauges
+              </li>
+              <li className="p-2 bg-slate-50 border border-slate-200 rounded">
+                <strong>India Meteorological Department (IMD):</strong> Alpine Rainfall & Micro-Climate Telemetry
+              </li>
+              <li className="p-2 bg-slate-50 border border-slate-200 rounded">
+                <strong>Geological Survey of India (GSI):</strong> Himalayan Slope Stability Sensors
+              </li>
+              <li className="p-2 bg-slate-50 border border-slate-200 rounded">
+                <strong>ISRO / Bhuvan:</strong> High-Resolution Geospatial Base Maps
+              </li>
             </ul>
+            <button
+              onClick={() => setShowDataModal(false)}
+              className="mt-6 w-full bg-[#005a9c] text-white py-2 rounded text-xs font-bold hover:bg-[#00487c] transition-colors"
+            >
+              Close Panel
+            </button>
           </div>
         </div>
       )}
 
-      <main className="flex-1 w-full min-h-screen p-4 md:p-6 bg-slate-50">
-        {children}
-      </main>
-
-      <footer className="bg-slate-900 text-slate-300 border-t border-slate-800 text-xs py-4 px-6 text-center">
-        <p>Designed, Developed, and Hosted for National Emergency Response | Powered by Hem Sanchar Telemetry Engine</p>
-        <p className="mt-1">Developed with ❤️ by Team Power Puff Girls | Smart India Hackathon 2026</p>
+      {/* Official Watermark Footer */}
+      <footer className="bg-slate-900 text-slate-300 border-t border-slate-800 text-xs py-4 px-6 text-center mt-auto">
+        <p>
+          Designed, Developed, and Maintained for High-Altitude Disaster Mitigation | Hem Sanchar Telemetry Network
+        </p>
+        <p className="text-neutral-400 text-[11px] mt-1">
+          Developed with ❤️ by Team Power Puff Girls | Smart India Hackathon 2026
+        </p>
       </footer>
     </div>
   );
