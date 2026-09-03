@@ -30,7 +30,7 @@ export default function MhaHeader() {
               DISASTER MANAGEMENT DIVISION | MINISTRY OF HOME AFFAIRS
             </p>
             <h1 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-              HEM SANCHAR <span className="text-sm font-normal text-slate-600">(हेम संचार)</span>
+              HEM SANCHAR <span className="text-sm font-normal text-slate-600">(HEM SANCHAR)</span>
             </h1>
           </div>
         </div>
