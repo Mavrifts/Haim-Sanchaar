@@ -2,268 +2,85 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-
-const TRANSLATIONS: Record<string, Record<string, string>> = {
-  en: {
-    title: 'HEM SANCHAR',
-    subtitle: 'DISASTER MANAGEMENT DIVISION | MINISTRY OF HOME AFFAIRS',
-    dashboard: 'Home Dashboard',
-    map: 'Live GIS Map',
-    telemetry: 'Telemetry Data',
-    dataSources: 'Data Sources',
-    emergency: 'Emergency Directives',
-    helpline: 'MHA: 011-23438252 | NDRF: 1078 | SEOC: 1070',
-  },
-  hi: {
-    title: 'हेम संचार',
-    subtitle: 'आपदा प्रबंधन प्रभाग | गृह मंत्रालय | भारत सरकार',
-    dashboard: 'मुख्य डैशबोर्ड',
-    map: 'लाइव जीआईएस मानचित्र',
-    telemetry: 'टेलीमेट्री डेटा',
-    dataSources: 'डेटा स्रोत',
-    emergency: 'आपातकालीन निर्देश',
-    helpline: 'एमएचए: 011-23438252 | एनडीआरएफ: 1078 | एसईओसी: 1070',
-  },
-  doi: {
-    title: 'हेम संचार',
-    subtitle: 'आपदा प्रबंधन विभाग | गृह मंत्रालय',
-    dashboard: 'मुख्य डैशबोर्ड',
-    map: 'लाइव जीआईएस नक्शा',
-    telemetry: 'टेलीमेट्री डेटा',
-    dataSources: 'डेटा सोर्स',
-    emergency: 'आपातकालीन निर्देश',
-    helpline: 'एमएचए: 011-23438252 | एनडीआरएफ: 1078',
-  },
-  ks: {
-    title: 'हेम संचार',
-    subtitle: 'आपदा प्रबंधन डिवीजन | गृह मंत्रालय',
-    dashboard: 'अहम डैशबोर्ड',
-    map: 'लाइव नक्शा',
-    telemetry: 'टेलीमेट्री',
-    dataSources: 'डेटा जरिया',
-    emergency: 'हंगामी हिदायत',
-    helpline: 'एमएचए: 011-23438252 | एनडीआरएफ: 1078',
-  },
-  lb: {
-    title: 'हेम संचार',
-    subtitle: 'आपदा प्रबंधन विभाग | गृह मंत्रालय',
-    dashboard: 'डैशबोर्ड',
-    map: 'जीआईएस नक्शा',
-    telemetry: 'टेलीमेट्री',
-    dataSources: 'डेटा',
-    emergency: 'आपातकालीन निर्देश',
-    helpline: 'एमएचए: 011-23438252 | एनडीआरएफ: 1078',
-  },
-  pa: {
-    title: 'हेम संचार',
-    subtitle: 'आपदा प्रबंधन प्रभाग | गृह मंत्रालय',
-    dashboard: 'मुख्य डैशबोर्ड',
-    map: 'लाइव जीआईएस नक्शा',
-    telemetry: 'टेलीमेट्री डेटा',
-    dataSources: 'डेटा स्रोत',
-    emergency: 'आपातकालीन हिदायतां',
-    helpline: 'एमएचए: 011-23438252 | एनडीआरएफ: 1078',
-  },
-  gbm: {
-    title: 'हेम संचार',
-    subtitle: 'आपदा प्रबंधन विभाग | गृह मंत्रालय',
-    dashboard: 'मुख्य डैशबोर्ड',
-    map: 'जीआईएस नक्शा',
-    telemetry: 'टेलीमेट्री डेटा',
-    dataSources: 'डेटा स्रोत',
-    emergency: 'आपातकालीन निर्देश',
-    helpline: 'एमएचए: 011-23438252 | एनडीआरएफ: 1078',
-  },
-  bn: {
-    title: 'হেম সঞ্চার',
-    subtitle: 'দুর্যোগ ব্যবস্থাপনা বিভাগ | স্বরাষ্ট্র মন্ত্রণালয়',
-    dashboard: 'মূল ড্যাশবোর্ড',
-    map: 'লাইভ জিআইএস মানচিত্র',
-    telemetry: 'টেলিমেট্রি ডেটা',
-    dataSources: 'ডেটা উৎস',
-    emergency: 'জরুরী নির্দেশাবলী',
-    helpline: 'এমএইচএ: 011-23438252 | এনডিআরএফ: 1078',
-  },
-};
+import { useAppState } from '@/context/StateContext';
+import { triggerContinuousSiren, stopContinuousSiren } from '@/utils/sound';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const [lang, setLang] = useState('en');
+  const { language, setLanguage, t } = useAppState();
   const [showDataModal, setShowDataModal] = useState(false);
   const [emergencyActive, setEmergencyActive] = useState(false);
 
-  const playSiren = () => {
-    try {
-      const AudioContextClass = window.AudioContext || (window as typeof window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-      if (!AudioContextClass) return;
-
-      const audioCtx = new AudioContextClass();
-      const osc1 = audioCtx.createOscillator();
-      const osc2 = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-
-      osc1.type = 'square';
-      osc1.frequency.setValueAtTime(800, audioCtx.currentTime);
-      osc2.type = 'square';
-      osc2.frequency.setValueAtTime(1000, audioCtx.currentTime);
-
-      gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 1);
-
-      osc1.connect(gain);
-      osc2.connect(gain);
-      gain.connect(audioCtx.destination);
-
-      osc1.start();
-      osc2.start();
-      osc1.stop(audioCtx.currentTime + 1);
-      osc2.stop(audioCtx.currentTime + 1);
-      window.setTimeout(() => void audioCtx.close(), 1200);
-    } catch (e) {
-      console.error('AudioContext error', e);
-    }
-  };
-
-  const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
-
   const toggleEmergency = () => {
-    const nextActive = !emergencyActive;
-    setEmergencyActive(nextActive);
-    if (nextActive) playSiren();
+    if (emergencyActive) {
+      stopContinuousSiren();
+    } else {
+      triggerContinuousSiren();
+    }
+    setEmergencyActive(!emergencyActive);
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans antialiased">
-      <div className="h-1 bg-amber-500 w-full" />
-
-      {/* Header */}
-      <header className="bg-white border-b border-slate-300 px-6 py-3.5 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+    <div className="min-h-screen bg-slate-50 flex flex-col">
+      <header className="bg-[#005a9c] text-white p-4 shadow-lg flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 border border-slate-400 bg-slate-50 flex flex-col items-center justify-center text-[9px] font-bold text-slate-700 text-center leading-tight p-1" aria-label="Official emblem frame">
-            <span className="text-lg leading-none">अशोक</span>
-            <span>सत्यमेव जयते</span>
-          </div>
+          <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="Emblem of India" className="w-12 h-12" />
           <div>
-            <p className="text-[10px] uppercase tracking-widest font-bold text-slate-700">MINISTRY OF HOME AFFAIRS | GOVERNMENT OF INDIA</p>
-            <p className="text-xs text-slate-500 mt-1">National emergency information service</p>
+            <h1 className="text-xl font-bold">{t.title}</h1>
+            <p className="text-xs text-blue-100">{t.subtitle}</p>
           </div>
         </div>
-
-        <div className="text-center lg:absolute lg:left-1/2 lg:-translate-x-1/2">
-          <h1 className="font-serif text-2xl font-bold tracking-tight text-slate-900">
-            HEM SANCHAR <span className="text-base font-normal text-slate-600">(हेम संचार)</span>
-          </h1>
-          <p className="text-[10px] uppercase tracking-widest font-bold text-blue-700">NATIONAL HIGH-ALTITUDE TELEMETRY NETWORK</p>
-        </div>
-
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 bg-slate-50 border border-slate-300 p-1.5 rounded">
-            <div className="w-10 h-12 border border-slate-300 bg-slate-200 flex items-center justify-center text-[9px] font-bold text-slate-600 text-center" aria-label="Shri Amit Shah portrait frame">
-              AS
+          <select 
+            value={language} 
+            onChange={(e) => setLanguage(e.target.value)}
+            className="bg-blue-800 text-white text-sm p-1 rounded"
+          >
+            <option value="en">English</option>
+            <option value="hi">Hindi</option>
+            <option value="doi">Dogri</option>
+            <option value="ks">Kashmiri</option>
+            <option value="lb">Ladakhi</option>
+            <option value="pa">Pahari</option>
+            <option value="gbm">Garhwali</option>
+            <option value="bn">Bengali</option>
+          </select>
+          <div className="flex items-center gap-2 border-l border-blue-700 pl-4">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/0/07/Amit_Shah_in_2024.jpg" alt="Amit Shah" className="w-10 h-10 rounded-full" />
+            <div className="text-[10px]">
+              <p className="font-bold">Shri Amit Shah</p>
+              <p>Hon'ble Union Minister of Home Affairs</p>
             </div>
-            <div>
-              <p className="text-xs font-bold text-slate-900 leading-tight">Shri Amit Shah</p>
-              <p className="text-[10px] text-slate-600">Hon&apos;ble Union Home Minister</p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-1.5 bg-slate-100 border border-slate-300 rounded px-2 py-1.5">
-            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Lang:</span>
-            <select
-              value={lang}
-              onChange={(e) => setLang(e.target.value)}
-              className="bg-transparent text-slate-800 text-xs font-bold focus:outline-none cursor-pointer"
-            >
-              <option value="en">English</option>
-              <option value="hi">हिन्दी (Hindi)</option>
-              <option value="doi">डोगरी (Dogri)</option>
-              <option value="ks">कश्मीरी (Kashmiri)</option>
-              <option value="lb">लाद्दाखी (Ladakhi)</option>
-              <option value="pa">पहाड़ी (Pahari)</option>
-              <option value="gbm">गढ़वाली (Garhwali)</option>
-              <option value="bn">বাংলা (Bengali)</option>
-            </select>
           </div>
         </div>
       </header>
 
-      {/* Nav */}
-      <nav className="bg-[#005a9c] text-white px-6 py-2 flex flex-wrap items-center justify-between text-xs font-medium shadow-sm">
+      <nav className="bg-[#00487c] text-white p-3 flex items-center justify-between shadow-md text-sm">
         <div className="flex items-center gap-6">
-          <Link className="hover:text-amber-300 transition-colors font-semibold" href="/">
-            {t.dashboard}
-          </Link>
-          <Link className="hover:text-amber-300 transition-colors" href="/map">
-            {t.map}
-          </Link>
-          <Link className="hover:text-amber-300 transition-colors" href="/telemetry">
-            {t.telemetry}
-          </Link>
-          <button
-            onClick={() => setShowDataModal(true)}
-            className="hover:text-amber-300 transition-colors cursor-pointer"
-          >
-            {t.dataSources}
-          </button>
-          <Link className="hover:text-amber-300 transition-colors" href="/alerts">
-            {t.emergency}
-          </Link>
+          <Link className="hover:text-amber-300 transition-colors" href="/">{t.dashboard}</Link>
+          <Link className="hover:text-amber-300 transition-colors" href="/map">{t.map}</Link>
+          <button onClick={() => setShowDataModal(true)} className="hover:text-amber-300 transition-colors cursor-pointer">{t.dataSources}</button>
+          <Link className="hover:text-amber-300 transition-colors" href="/alerts">{t.emergency}</Link>
           <button
             onClick={toggleEmergency}
-            aria-pressed={emergencyActive}
-            aria-label="Toggle emergency siren"
             className={`transition-colors ${emergencyActive ? 'text-amber-300 font-bold' : 'hover:text-amber-300'}`}
           >
             Siren
           </button>
         </div>
-
-        <div className="hidden sm:block text-[11px] text-amber-200 font-mono">
-          {t.helpline}
-        </div>
+        <div className="hidden sm:block text-[11px] text-amber-200 font-mono">{t.helpline}</div>
       </nav>
 
       <main className="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6">{children}</main>
 
-      {/* Data Sources Modal */}
       {showDataModal && (
-        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" role="presentation" onClick={() => setShowDataModal(false)}>
-          <div className="bg-white border border-slate-300 rounded-lg max-w-md w-full p-6 shadow-xl" role="dialog" aria-modal="true" aria-labelledby="data-sources-title" onClick={(event) => event.stopPropagation()}>
-            <h2 id="data-sources-title" className="text-lg font-bold text-slate-900 border-b border-slate-200 pb-2 mb-4">
-              Official Government Data Feeds
-            </h2>
-            <ul className="space-y-3 text-xs text-slate-700">
-              <li className="p-2 bg-slate-50 border border-slate-200 rounded">
-                <a href="https://cwc.gov.in" target="_blank" rel="noreferrer" className="block text-blue-800 hover:underline"><strong>Central Water Commission (CWC)</strong>: River Discharge & Hydrological Gauges</a>
-              </li>
-              <li className="p-2 bg-slate-50 border border-slate-200 rounded">
-                <a href="https://mausam.imd.gov.in" target="_blank" rel="noreferrer" className="block text-blue-800 hover:underline"><strong>India Meteorological Department (IMD)</strong>: Alpine Rainfall & Micro-Climate Telemetry</a>
-              </li>
-              <li className="p-2 bg-slate-50 border border-slate-200 rounded">
-                <a href="https://gsi.gov.in" target="_blank" rel="noreferrer" className="block text-blue-800 hover:underline"><strong>Geological Survey of India (GSI)</strong>: Himalayan Slope Stability Sensors</a>
-              </li>
-              <li className="p-2 bg-slate-50 border border-slate-200 rounded">
-                <a href="https://bhuvan.nrsc.gov.in" target="_blank" rel="noreferrer" className="block text-blue-800 hover:underline"><strong>ISRO / Bhuvan</strong>: High-Resolution Geospatial Base Maps</a>
-              </li>
-            </ul>
-            <button
-              onClick={() => setShowDataModal(false)}
-              className="mt-6 w-full bg-[#005a9c] text-white py-2 rounded text-xs font-bold hover:bg-[#00487c] transition-colors"
-            >
-              Close Panel
-            </button>
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowDataModal(false)}>
+          <div className="bg-white border border-slate-300 rounded-lg max-w-md w-full p-6 shadow-xl" onClick={(e) => e.stopPropagation()}>
+            <h2 className="text-lg font-bold text-slate-900 border-b border-slate-200 pb-2 mb-4">Official Government Data Feeds</h2>
+            <button onClick={() => setShowDataModal(false)} className="mt-6 w-full bg-[#005a9c] text-white py-2 rounded text-xs font-bold hover:bg-[#00487c]">Close Panel</button>
           </div>
         </div>
       )}
-
-      {/* Footer */}
-      <footer className="bg-white text-slate-600 border-t border-slate-300 text-xs py-4 px-6 text-center mt-auto">
-        <p>
-          Designed, Developed, and Maintained for High-Altitude Disaster Mitigation | Hem Sanchar Telemetry Network
-        </p>
-        <p className="text-slate-500 text-[11px] mt-1">
-          Developed with ❤️ by Team Power Puff Girls | Smart India Hackathon 2026
-        </p>
-      </footer>
     </div>
   );
 }
+

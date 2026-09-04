@@ -1,6 +1,6 @@
 'use client';
 
-import { useActiveState } from '@/context/StateContext';
+import { useAppState } from '@/context/StateContext';
 
 import React, { useEffect, useRef, useState } from 'react';
 import 'leaflet/dist/leaflet.css';
@@ -45,7 +45,7 @@ export default function Map({
 }: MapProps) {
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
-  const { lowBandwidth } = useActiveState();
+  const { lowBandwidth } = useAppState();
   const markersRef = useRef<L.Marker[]>([]);
 
   // State for active popup village and its dynamic Gemini AI directive
@@ -84,11 +84,11 @@ export default function Map({
       // Add zoom control at bottom-right
       L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-      // Use a standard public street basemap with a complete geographic extent.
+      // Use standard OpenStreetMap Carto tiles so sovereign boundaries, state borders, and district lines are fully visible.
       if (!lowBandwidth) {
-        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
           maxZoom: 19,
-          attribution: 'Tiles &copy; Esri',
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
         }).addTo(map);
       } else {
         // Low-bandwidth mode: Minimalistic styling or blank map, just markers.
