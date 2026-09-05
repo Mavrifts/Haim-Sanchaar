@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useTransition } from 'react';
 import dynamic from 'next/dynamic';
-import { useActiveState } from '@/context/StateContext';
+import { useAppState } from '@/context/StateContext';
 import { getVillagesByState, DashboardResponse, VillageData } from '@/app/actions';
 import { RefreshCw, Map as MapIcon, Layers } from 'lucide-react';
 import SectorSelector from '@/components/SectorSelector';
@@ -19,7 +19,7 @@ const Map = dynamic(() => import('@/components/Map'), {
 });
 
 export default function LiveMapPage() {
-  const { selectedState } = useActiveState();
+  const { selectedState, t } = useAppState();
   const [data, setData] = useState<DashboardResponse | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [isPending, startTransition] = useTransition();
@@ -55,7 +55,7 @@ export default function LiveMapPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-[#1D1D1F] flex items-center gap-2">
-            <MapIcon className="w-6 h-6 text-[#0071E3]" /> Live GIS Tactical Radar Map
+            <MapIcon className="w-6 h-6 text-[#0071E3]" /> {t.map}
           </h1>
           <p className="text-xs text-[#86868B] mt-0.5">
             Interactive OpenStreetMap plotting coordinates for {selectedState}. Click any sensor node/circle marker to generate Gemini AI evacuation directives, route suggestions, and helplines.
@@ -63,7 +63,7 @@ export default function LiveMapPage() {
         </div>
         <div className="flex items-center gap-3">
           <span className="text-xs text-[#86868B] bg-white px-3 py-1 rounded-full border border-black/[0.06] shadow-2xs font-semibold shrink-0">
-            {villages.length} Active Sensors Mapped
+            {villages.length} {t.activeSensors}
           </span>
           <button
             onClick={() => loadData(selectedState)}
@@ -82,6 +82,7 @@ export default function LiveMapPage() {
           selectedVillage={selectedVillage}
           selectedState={selectedState}
           onSelectVillage={(v) => setSelectedVillage(v)}
+          t={t}
         />
       </div>
       </div>

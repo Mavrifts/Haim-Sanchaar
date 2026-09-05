@@ -27,6 +27,7 @@ interface MapProps {
   selectedVillage?: VillageData | null;
   selectedState?: string;
   onSelectVillage?: (village: VillageData) => void;
+  t: any;
 }
 
 // Preset state centers for instant tight centering
@@ -42,6 +43,7 @@ export default function Map({
   selectedVillage,
   selectedState = 'Himachal Pradesh',
   onSelectVillage,
+  t,
 }: MapProps) {
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
@@ -277,7 +279,7 @@ export default function Map({
           <div className="grid grid-cols-3 gap-2 my-3 text-xs">
             <div className="bg-neutral-950/80 p-2.5 rounded-2xl border border-neutral-800 text-center">
               <span className="text-[10px] text-neutral-400 flex items-center justify-center gap-1 mb-1">
-                <Droplets className="w-3 h-3 text-blue-400" /> Rain Rate
+                <Droplets className="w-3 h-3 text-blue-400" /> {t.rainfallRate}
               </span>
               <strong className="text-sm font-bold text-white block">
                 {activeTel?.rainfall_mm_hr ?? 38} <span className="text-[10px] font-normal text-neutral-400">mm/h</span>
@@ -286,7 +288,7 @@ export default function Map({
 
             <div className="bg-neutral-950/80 p-2.5 rounded-2xl border border-neutral-800 text-center">
               <span className="text-[10px] text-neutral-400 flex items-center justify-center gap-1 mb-1">
-                <Gauge className="w-3 h-3 text-amber-400" /> Soil Moisture
+                <Gauge className="w-3 h-3 text-amber-400" /> {t.soilMoisturePct}
               </span>
               <strong className="text-sm font-bold text-amber-300 block">
                 {activeTel?.soil_moisture_pct ?? 86}%
@@ -295,7 +297,7 @@ export default function Map({
 
             <div className="bg-neutral-950/80 p-2.5 rounded-2xl border border-neutral-800 text-center">
               <span className="text-[10px] text-neutral-400 flex items-center justify-center gap-1 mb-1">
-                <Waves className="w-3 h-3 text-red-400" /> Water Level
+                <Waves className="w-3 h-3 text-red-400" /> {t.waterLevel}
               </span>
               <strong className="text-sm font-bold text-white block">
                 {activeTel?.water_level ? `${activeTel.water_level.toFixed(1)}m` : 'Surge'}

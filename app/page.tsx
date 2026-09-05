@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useTransition } from 'react';
-import { useActiveState } from '@/context/StateContext';
+import { useAppState } from '@/context/StateContext';
 import { getVillagesByState, DashboardResponse } from './actions';
 import {
   Shield,
@@ -23,7 +23,7 @@ import Link from 'next/link';
 import SectorSelector from '@/components/SectorSelector';
 
 export default function HomeDashboard() {
-  const { selectedState } = useActiveState();
+  const { selectedState, t } = useAppState();
   const [data, setData] = useState<DashboardResponse | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [isPending, startTransition] = useTransition();
@@ -68,11 +68,11 @@ export default function HomeDashboard() {
       {/* Top Welcome & Summary Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-[#1D1D1F]">
-            Situational Command: {selectedState}
+      <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-[#1D1D1F]">
+            {t.situationalCommand}: {selectedState}
           </h1>
           <p className="text-xs text-[#86868B] mt-1">
-            Real-time tactical intelligence, AI directives, and active hydration telemetry for NDRF deployables.
+            {t.realTimeTactical || 'Real-time tactical intelligence, AI directives, and active hydration telemetry for NDRF deployables.'}
           </p>
         </div>
 
@@ -90,8 +90,8 @@ export default function HomeDashboard() {
       <section className="border border-slate-300 rounded p-6 bg-white">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-200">
           <div>
-            <h2 className="text-sm font-bold text-slate-900 uppercase">Tactical Evacuation Directive</h2>
-            <p className="text-xs text-slate-500 mt-1">AI-synthesized directives for {selectedState} Sector.</p>
+            <h2 className="text-sm font-bold text-slate-900 uppercase">{t.tacticalEvacuation}</h2>
+            <p className="text-xs text-slate-500 mt-1">{t.aiSynthesized || `AI-synthesized directives for ${selectedState} Sector.`}</p>
           </div>
           <button
             onClick={copySummary}
@@ -116,7 +116,7 @@ export default function HomeDashboard() {
         {/* Card 1: Critical Sectors */}
         <div className="bg-white border border-black/[0.08] rounded-3xl p-6 space-y-3 shadow-xs">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-[#86868B]">Critical Sectors</span>
+            <span className="text-xs font-medium text-[#86868B]">{t.criticalSectors}</span>
             <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
           </div>
           <div className="flex items-baseline gap-2">
@@ -131,7 +131,7 @@ export default function HomeDashboard() {
         {/* Card 2: Population At Risk */}
         <div className="bg-white border border-black/[0.08] rounded-3xl p-6 space-y-3 shadow-xs">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-[#86868B]">Population At Direct Risk</span>
+            <span className="text-xs font-medium text-[#86868B]">{t.populationAtRisk}</span>
             <span className="w-2 h-2 rounded-full bg-amber-500" />
           </div>
           <div className="flex items-baseline gap-2">
@@ -146,7 +146,7 @@ export default function HomeDashboard() {
         {/* Card 3: Active Battalions */}
         <div className="bg-white border border-black/[0.08] rounded-3xl p-6 space-y-3 shadow-xs">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-[#86868B]">NDRF Battalions</span>
+            <span className="text-xs font-medium text-[#86868B]">{t.ndrfBattalions}</span>
             <span className="w-2 h-2 rounded-full bg-blue-500" />
           </div>
           <div className="flex items-baseline gap-2">
@@ -163,7 +163,7 @@ export default function HomeDashboard() {
         {/* Card 4: Soil Saturation */}
         <div className="bg-white border border-black/[0.08] rounded-3xl p-6 space-y-3 shadow-xs">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-[#86868B]">Peak Soil Moisture</span>
+            <span className="text-xs font-medium text-[#86868B]">{t.peakSoilMoisture}</span>
             <Gauge className="w-4 h-4 text-[#0071E3]" />
           </div>
           <div className="flex items-baseline gap-2">
@@ -180,7 +180,7 @@ export default function HomeDashboard() {
       <section className="bg-white border border-black/[0.08] rounded-3xl p-6 md:p-8 space-y-6 shadow-xs">
         <div>
           <h2 className="text-lg font-bold tracking-tight text-[#1D1D1F] flex items-center gap-2">
-            <AlertTriangle className="w-5 h-5 text-red-500" /> Active Danger Zones & Evacuation Sectors
+            <AlertTriangle className="w-5 h-5 text-red-500" /> {t.activeDangerZones}
           </h2>
           <p className="text-xs text-[#86868B] mt-1">
             Active river fronts currently exceeding hydrological caution limits in {selectedState}.

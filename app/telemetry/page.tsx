@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useTransition } from 'react';
-import { useActiveState } from '@/context/StateContext';
+import { useAppState } from '@/context/StateContext';
 import { getVillagesByState, dispatchQRT, DashboardResponse, TelemetryData } from '@/app/actions';
 import {
   Table,
@@ -25,7 +25,7 @@ import {
 
 import SectorSelector from '@/components/SectorSelector';
 export default function TelemetryPage() {
-  const { selectedState } = useActiveState();
+  const { selectedState, t } = useAppState();
   const [data, setData] = useState<DashboardResponse | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [isPending, startTransition] = useTransition();
@@ -164,13 +164,14 @@ export default function TelemetryPage() {
           <table className="w-full text-left text-xs border-collapse">
             <thead>
               <tr className="bg-black/[0.01] text-[#86868B] font-semibold border-b border-black/[0.06]">
-                <th className="py-4 px-4">Sector & River Basin</th>
-                <th className="py-4 px-4">Risk Rating</th>
-                <th className="py-4 px-4">Water Level & Trend</th>
-                <th className="py-4 px-4">Soil Moisture</th>
-                <th className="py-4 px-4">Slope Stability Index</th>
-                <th className="py-4 px-4">Rain Intensity</th>
-                <th className="py-4 px-4 text-right">Emergency Deploy</th>
+                <th className="py-4 px-4">{t.stationId}</th>
+                <th className="py-4 px-4">{t.districtSector}</th>
+                <th className="py-4 px-4">{t.riverBasin}</th>
+                <th className="py-4 px-4">{t.waterLevel}</th>
+                <th className="py-4 px-4">{t.dangerLevel}</th>
+                <th className="py-4 px-4">{t.rainfallRate}</th>
+                <th className="py-4 px-4">{t.soilMoisturePct}</th>
+                <th className="py-4 px-4">{t.riskStatus}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-black/[0.04]">
