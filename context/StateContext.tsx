@@ -92,3 +92,5 @@ export function useAppState() {
   return context;
 }
 
+export const useActiveState = useAppState;
+
