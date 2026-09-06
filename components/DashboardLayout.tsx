@@ -70,9 +70,53 @@ export default function DashboardLayout({
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4">
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6 border border-slate-200">
             <h3 className="text-xl font-bold text-slate-900 mb-4">{t.navDataSources || 'Data Sources'}</h3>
-            <p className="text-slate-600 text-xs leading-relaxed mb-6">
-              HEM SANCHAR integrates live hydrological telemetry feeds from Central Water Commission (CWC), IMD Doppler Radar, ISRO Bhuvan runoff models, and Supabase real-time sensor tables.
-            </p>
+            <div className="space-y-4 text-left py-2">
+              <p className="text-sm text-slate-600 font-medium">
+                HEM SANCHAR integrates real-time telemetry and hydrological feeds from official government and open-data APIs:
+              </p>
+
+              <ul className="space-y-3 text-sm">
+                <li className="p-2.5 bg-slate-50 border border-slate-200 rounded flex justify-between items-center hover:bg-slate-100 transition-colors">
+                  <div>
+                    <p className="font-bold text-slate-800">Central Water Commission (CWC)</p>
+                    <p className="text-xs text-slate-500">Flood Forecasting &amp; Hydro-Gauge Network</p>
+                  </div>
+                  <a href="https://ffs.rcmcwc.org" target="_blank" rel="noopener noreferrer" className="text-xs font-semibold text-blue-600 hover:underline flex items-center gap-1">
+                    ffs.rcmcwc.org ↗
+                  </a>
+                </li>
+
+                <li className="p-2.5 bg-slate-50 border border-slate-200 rounded flex justify-between items-center hover:bg-slate-100 transition-colors">
+                  <div>
+                    <p className="font-bold text-slate-800">India Meteorological Department (IMD)</p>
+                    <p className="text-xs text-slate-500">AWS Rainfall &amp; Doppler Weather Radar</p>
+                  </div>
+                  <a href="https://mausam.imd.gov.in" target="_blank" rel="noopener noreferrer" className="text-xs font-semibold text-blue-600 hover:underline flex items-center gap-1">
+                    mausam.imd.gov.in ↗
+                  </a>
+                </li>
+
+                <li className="p-2.5 bg-slate-50 border border-slate-200 rounded flex justify-between items-center hover:bg-slate-100 transition-colors">
+                  <div>
+                    <p className="font-bold text-slate-800">ISRO Bhuvan Portal</p>
+                    <p className="text-xs text-slate-500">Satellite Runoff Models &amp; Terrain Elevation</p>
+                  </div>
+                  <a href="https://bhuvan.nrsc.gov.in" target="_blank" rel="noopener noreferrer" className="text-xs font-semibold text-blue-600 hover:underline flex items-center gap-1">
+                    bhuvan.nrsc.gov.in ↗
+                  </a>
+                </li>
+
+                <li className="p-2.5 bg-slate-50 border border-slate-200 rounded flex justify-between items-center hover:bg-slate-100 transition-colors">
+                  <div>
+                    <p className="font-bold text-slate-800">Open-Meteo Global Flood API</p>
+                    <p className="text-xs text-slate-500">River Discharge Forecast Telemetry</p>
+                  </div>
+                  <a href="https://open-meteo.com/en/docs/flood-api" target="_blank" rel="noopener noreferrer" className="text-xs font-semibold text-blue-600 hover:underline flex items-center gap-1">
+                    open-meteo.com ↗
+                  </a>
+                </li>
+              </ul>
+            </div>
             <div className="flex justify-end">
               <button
                 onClick={() => setIsDataModalOpen(false)}
