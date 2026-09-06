@@ -11,7 +11,7 @@ export interface LocationData {
   flow_rate_cumecs: number;
   battery_level: number;
   status: 'HIGH' | 'CRITICAL' | 'NORMAL';
-  risk_status: 'CRITICAL' | 'WARNING' | 'NORMAL';
+  risk_status: 'CRITICAL' | 'WARNING' | 'NORMAL' | 'HIGH';
   safe_shelter?: string;
   emergency_numbers?: string[];
 }
@@ -35,6 +35,30 @@ export const MULTI_STATE_LOCATIONS: LocationData[] = [
   { id: 'LA-02', name: 'Suru River Hydro Desk', district: 'Kargil', state: 'Ladakh', latitude: 34.5539, longitude: 76.1349, water_level: '620', flow_rate_cumecs: 3100, battery_level: 97, status: 'NORMAL', risk_status: 'NORMAL', safe_shelter: 'Kargil Stadium Complex', emergency_numbers: ['Kargil Control: 01985-232216'] }
 ];
 
+export interface TelemetryData {
+  water_level?: number;
+  soil_moisture_pct?: number;
+  rainfall_mm_hr?: number;
+  rate_of_rise?: number;
+}
+
+export interface VillageData extends LocationData {
+  river_basin: string;
+  alternate_routes?: string[];
+  live_telemetry?: TelemetryData[];
+  ai_directive?: string;
+}
+
+export interface DashboardResponse {
+  villages: VillageData[];
+  evacuationSummary?: string;
+  totalPopulationAtRisk?: number;
+  totalActiveSensors?: number;
+  criticalAlertsCount?: number;
+  activeBattalionsCount?: number;
+  lastSyncTimestamp?: string;
+}
+
 export const DATA_SOURCES_PROVENANCE = [
   { org: 'Central Water Commission (CWC)', name: 'Hydro-Gauge Network', url: 'https://ffs.rcmcwc.org', frequency: 'Hourly' },
   { org: 'Open-Meteo', name: 'Global Flood API', url: 'https://open-meteo.com/en/docs/flood-api', frequency: '6-Hour' },
@@ -46,23 +70,43 @@ export async function fetchTelemetryData() {
   return MULTI_STATE_LOCATIONS;
 }
 
-export function getVillagesByState(state: string) {
-  if (!state || state === 'ALL') return MULTI_STATE_LOCATIONS;
-  return MULTI_STATE_LOCATIONS.filter(item => item.state.toLowerCase() === state.toLowerCase());
-}
+export async function getVillagesByState(state: string): Promise<DashboardResponse> {
+  const filtered = (!state || state === 'ALL')
+    ? MULTI_STATE_LOCATIONS
+    : MULTI_STATE_LOCATIONS.filter(item => item.state.toLowerCase() === state.toLowerCase());
 
-export async function fetchDashboardData(state?: string) {
-  const locations = getVillagesByState(state || 'ALL');
+  const villages: VillageData[] = filtered.map(loc => ({
+    ...loc,
+    river_basin: loc.name.split(' ')[0] + ' Basin',
+    alternate_routes: [loc.safe_shelter || 'Ridge High Ground'],
+    live_telemetry: [{
+      water_level: parseFloat(loc.water_level) / 100,
+      soil_moisture_pct: loc.battery_level,
+      rainfall_mm_hr: 25.5,
+      rate_of_rise: 1.2
+    }],
+    ai_directive: `Immediate tactical monitoring recommended for ${loc.name} sector.`
+  }));
+
   return {
-    locations,
-    totalActiveSensors: locations.length,
-    criticalAlertsCount: locations.filter(l => l.risk_status === 'CRITICAL').length,
+    villages,
+    evacuationSummary: `Evacuation advisory active for ${!state || state === 'ALL' ? 'all mountain hazard sectors' : state}.`,
+    totalPopulationAtRisk: villages.length * 1420,
+    totalActiveSensors: villages.length,
+    criticalAlertsCount: villages.filter(v => v.risk_status === 'CRITICAL').length,
+    activeBattalionsCount: 8,
     lastSyncTimestamp: new Date().toISOString()
   };
 }
 
-export async function dispatchORT(payload: any) {
-  console.log('Dispatching Quick Operational Response Team:', payload);
-  return { success: true, timestamp: new Date().toISOString() };
+export async function fetchDashboardData(state?: string): Promise<DashboardResponse> {
+  return getVillagesByState(state || 'ALL');
 }
+
+export async function dispatchQRT(payload: any) {
+  console.log('Dispatching Quick Operational Response Team:', payload);
+  return { success: true, message: 'QRT Dispatched successfully', timestamp: new Date().toISOString() };
+}
+
+export const dispatchORT = dispatchQRT;
 

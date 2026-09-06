@@ -60,7 +60,7 @@ export default function TelemetryPage() {
     
     const tel = Array.isArray(village.live_telemetry)
       ? village.live_telemetry[0]
-      : (village.live_telemetry as TelemetryData) || {};
+      : (village.live_telemetry as unknown as TelemetryData) || {};
 
     const waterLevel = tel.water_level ?? 12.5;
     const soilMoisture = tel.soil_moisture_pct ?? 82;
@@ -185,7 +185,7 @@ export default function TelemetryPage() {
                 filteredVillages.map((village) => {
                   const tel = Array.isArray(village.live_telemetry)
                     ? village.live_telemetry[0]
-                    : (village.live_telemetry as TelemetryData) || {};
+                    : (village.live_telemetry as unknown as TelemetryData) || {};
 
                   // Derive Water Level Trend
                   const isRising = tel.rate_of_rise && tel.rate_of_rise > 0;
