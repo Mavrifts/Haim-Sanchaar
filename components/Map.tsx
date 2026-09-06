@@ -1,11 +1,21 @@
 'use client';
 
-import { useAppState } from '@/context/StateContext';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
+import { MapContainer, TileLayer, Marker } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
-import { VillageData, getVillageEvacuationDirective } from '@/app/actions';
-import { MapPin, X, Sparkles, Navigation } from 'lucide-react';
+import { VillageData } from '@/app/actions';
+import { X } from 'lucide-react';
+import { useAppState } from '@/context/StateContext';
+
+// Fix default Leaflet marker icon paths for Next.js
+const customIcon = L.icon({
+  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+  iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+});
 
 interface MapProps {
   villages: VillageData[];
@@ -24,46 +34,31 @@ export default function Map({
   sensors,
   onSelectVillage,
 }: MapProps) {
-  const mapContainerRef = useRef<HTMLDivElement | null>(null);
-  const mapInstanceRef = useRef<L.Map | null>(null);
-  const { mode, t: contextT } = useAppState();
-
   const [activePopupVillage, setActivePopupVillage] = useState<VillageData | null>(null);
   const [aiDirectives, setAiDirectives] = useState<Record<string | number, string>>({});
 
-  useEffect(() => {
-    if (!mapContainerRef.current) return;
-    
-    if (!mapInstanceRef.current) {
-        mapInstanceRef.current = L.map(mapContainerRef.current).setView([31.1, 77.1], 8);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mapInstanceRef.current);
-    }
-
-    const map = mapInstanceRef.current;
-    
-    // Clear existing markers
-    map.eachLayer((layer) => {
-      if (layer instanceof L.CircleMarker || layer instanceof L.Marker) {
-        map.removeLayer(layer);
-      }
-    });
-
-    villages.forEach((v) => {
-        const pulseIcon = L.divIcon({
-            className: 'bg-red-500 rounded-full w-4 h-4 animate-ping',
-            html: '<div class="w-4 h-4 bg-red-600 rounded-full animate-pulse border-2 border-white"></div>'
-        });
-        
-        L.marker([v.lat, v.lon], { icon: pulseIcon })
-          .addTo(map)
-          .on('click', () => setActivePopupVillage(v));
-    });
-
-  }, [villages]);
-
   return (
     <div className="relative w-full h-[600px] border border-slate-200 rounded-2xl overflow-hidden">
-        <div ref={mapContainerRef} className="w-full h-full" />
+      <MapContainer 
+        center={[31.1, 77.1]} 
+        zoom={8} 
+        style={{ height: '100%', width: '100%' }}
+      >
+        <TileLayer
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        />
+        {villages.map((v) => (
+          <Marker 
+            key={v.id} 
+            position={[v.lat, v.lon]} 
+            icon={customIcon}
+            eventHandlers={{
+                click: () => setActivePopupVillage(v)
+            }}
+          />
+        ))}
+      </MapContainer>
         
         {activePopupVillage && (
             <div className="absolute top-4 right-4 z-[1000] bg-white p-4 rounded-xl shadow-lg w-72 border border-slate-200">
@@ -80,3 +75,4 @@ export default function Map({
     </div>
   );
 }
+
