@@ -2,8 +2,8 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { useAppState, UserMode } from '@/context/StateContext';
-import { AlertTriangle, Shield, CheckCircle, X, Users, MapPin, Radio, Send } from 'lucide-react';
+import { useAppState } from '@/context/StateContext';
+import { AlertTriangle, Shield, CheckCircle, X, Send } from 'lucide-react';
 
 export default function DashboardLayout({
   children,
