@@ -586,6 +586,99 @@ const MULTI_STATE_FALLBACK: VillageData[] = [
       timestamp: new Date().toISOString(),
     },
   },
+  // --- Kerala ---
+  {
+    id: 'KL-01',
+    name: 'Wayanad Meppadi Hillside',
+    district: 'Wayanad',
+    state: 'Kerala',
+    population: 14800,
+    river_basin: 'Chaliyar River Catchment',
+    latitude: 11.5510,
+    longitude: 76.1260,
+    risk_status: 'CRITICAL',
+    evacuation_status: 'MANDATORY EVACUATION',
+    assigned_battalion: '4th Bn NDRF (Arakkonam / Wayanad Post)',
+    safe_shelter: 'Chooralmala High Relief Pavilion',
+    alternate_routes: ['Vellarimala Ridge Highway', 'Kalpetta Bypass'],
+    places_you_can_wait: ['Meppadi High School Quadrangle'],
+    emergency_numbers: ['NDRF: 1078', 'Wayanad EOC: 04936-204151'],
+    live_telemetry: {
+      sensor_id: 'TEL-KL-WYD-01',
+      water_level: 412.50,
+      danger_level: 410.00,
+      warning_level: 408.00,
+      rainfall_mm_hr: 58.0,
+      soil_moisture_pct: 96.5,
+      rate_of_rise: 0.65,
+      flow_rate_cumecs: 14200,
+      battery_level: 90,
+      status: 'CRITICAL',
+      timestamp: new Date().toISOString(),
+    },
+  },
+  // --- Bihar ---
+  {
+    id: 'BR-01',
+    name: 'Kosi River Floodplain',
+    district: 'Saharasa',
+    state: 'Bihar',
+    population: 28000,
+    river_basin: 'Kosi Basin',
+    latitude: 25.8833,
+    longitude: 86.6000,
+    risk_status: 'HIGH',
+    evacuation_status: 'HIGH ALERT',
+    assigned_battalion: '9th Bn NDRF (Bihta)',
+    safe_shelter: 'Saharasa High Embankment Camp',
+    alternate_routes: ['NH-107 High Altitude Embankment Route'],
+    places_you_can_wait: ['Saharasa College Auditorium'],
+    emergency_numbers: ['NDRF: 1078', 'Bihar BSDMA: 0612-2547041'],
+    live_telemetry: {
+      sensor_id: 'TEL-BR-KSI-01',
+      water_level: 48.20,
+      danger_level: 47.00,
+      warning_level: 46.20,
+      rainfall_mm_hr: 34.0,
+      soil_moisture_pct: 89.0,
+      rate_of_rise: 0.28,
+      flow_rate_cumecs: 34000,
+      battery_level: 94,
+      status: 'HIGH',
+      timestamp: new Date().toISOString(),
+    },
+  },
+  // --- Odisha ---
+  {
+    id: 'OD-01',
+    name: 'Mahanadi Delta Lower Reach',
+    district: 'Cuttack',
+    state: 'Odisha',
+    population: 22000,
+    river_basin: 'Mahanadi Basin',
+    latitude: 20.4625,
+    longitude: 85.8828,
+    risk_status: 'HIGH',
+    evacuation_status: 'HIGH ALERT',
+    assigned_battalion: '3rd Bn NDRF (Mundali)',
+    safe_shelter: 'Mundali High Embankment Cyclone Shelter',
+    alternate_routes: ['Cuttack Ring Road Bypass'],
+    places_you_can_wait: ['Ravenshaw University Ground'],
+    emergency_numbers: ['NDRF: 1078', 'OSDMA: 0674-2534177'],
+    live_telemetry: {
+      sensor_id: 'TEL-OD-MHN-01',
+      water_level: 27.40,
+      danger_level: 26.50,
+      warning_level: 25.80,
+      rainfall_mm_hr: 31.0,
+      soil_moisture_pct: 84.5,
+      rate_of_rise: 0.22,
+      flow_rate_cumecs: 29000,
+      battery_level: 98,
+      status: 'HIGH',
+      timestamp: new Date().toISOString(),
+    },
+  },
 ];
 
 function getSupabaseUrl(): string {
@@ -877,3 +970,32 @@ export async function dispatchQRT(payload: {
     };
   }
 }
+
+export const DATA_SOURCES_PROVENANCE = [
+  {
+    name: 'Central Water Commission (CWC)',
+    url: 'https://cwc.gov.in',
+    type: 'Hydrological River Gauge Telemetry',
+  },
+  {
+    name: 'India Meteorological Department (IMD)',
+    url: 'https://mausam.imd.gov.in',
+    type: 'Radar Precipitation & Cloudburst Warning',
+  },
+  {
+    name: 'ISRO Bhuvan Geo-Spatial Platform',
+    url: 'https://bhuvan.nrsc.gov.in',
+    type: 'Satellite Runoff & Soil Saturation Data',
+  },
+  {
+    name: 'Open-Meteo Global Flood API',
+    url: 'https://open-meteo.com/en/docs/flood-api',
+    type: 'Global River Discharge Hydrological Models',
+  },
+  {
+    name: 'Supabase Real-Time Hydration Database',
+    url: 'https://supabase.com',
+    type: 'IoT Hydrological Sensor Data Store',
+  },
+];
+

@@ -23,6 +23,7 @@ import {
   Hospital,
   Zap,
   ShieldCheck,
+  Compass,
 } from 'lucide-react';
 
 interface MapProps {
@@ -38,14 +39,19 @@ const STATE_CENTERS: Record<string, { center: [number, number]; zoom: number }> 
   'Uttarakhand': { center: [30.0668, 79.0193], zoom: 8 },
   'Jammu & Kashmir': { center: [33.7782, 76.5762], zoom: 7 },
   'Ladakh': { center: [34.1526, 77.5771], zoom: 7 },
+  'Assam': { center: [26.2006, 92.9376], zoom: 7 },
+  'Kerala': { center: [10.8505, 76.2711], zoom: 8 },
+  'Bihar': { center: [25.0961, 85.3131], zoom: 7 },
+  'Odisha': { center: [20.9517, 85.0985], zoom: 7 },
 };
 
-// Mock Infrastructure Nodes for Layer 2
 const INFRASTRUCTURE_NODES = [
   { name: 'Kullu District Hospital', lat: 31.9579, lng: 77.1095, type: 'hospital' },
   { name: 'Pandoh Hydro Power Substation', lat: 31.6700, lng: 77.0600, type: 'power' },
   { name: 'Beas River Main Span Bridge', lat: 31.9000, lng: 77.1500, type: 'bridge' },
   { name: 'Shimla SEOC Command Base', lat: 31.1048, lng: 77.1734, type: 'hospital' },
+  { name: 'Majuli Emergency High Relief Hub', lat: 26.9538, lng: 94.2037, type: 'hospital' },
+  { name: 'Wayanad Base Hospital', lat: 11.5510, lng: 76.1260, type: 'hospital' },
 ];
 
 export default function Map({
@@ -55,16 +61,19 @@ export default function Map({
   onSelectVillage,
 }: MapProps) {
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
+  mapContainerRef.current = mapContainerRef.current;
   const mapInstanceRef = useRef<L.Map | null>(null);
   const { lowBandwidth, t } = useAppState();
 
   const markersRef = useRef<L.Marker[]>([]);
+  const circlesRef = useRef<L.Circle[]>([]);
   const infraMarkersRef = useRef<L.Marker[]>([]);
   const citizenMarkersRef = useRef<L.Marker[]>([]);
   const routePolylinesRef = useRef<L.Polyline[]>([]);
 
-  // Layer Visibility State
+  // Google Flood Hub Layer Toggles State
   const [showIotSensors, setShowIotSensors] = useState<boolean>(true);
+  const [showRiskCircles, setShowRiskCircles] = useState<boolean>(true);
   const [showInfrastructure, setShowInfrastructure] = useState<boolean>(true);
   const [showEvacRoutes, setShowEvacRoutes] = useState<boolean>(true);
   const [showCitizenReports, setShowCitizenReports] = useState<boolean>(true);
@@ -104,7 +113,7 @@ export default function Map({
 
       L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-      // OpenStreetMap Carto tiles for clear borders and terrain
+      // OpenStreetMap Carto tiles for standard Google Flood Hub-style rendering
       if (!lowBandwidth) {
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
           maxZoom: 19,
@@ -118,14 +127,16 @@ export default function Map({
     }
   }, []);
 
-  // Render Markers and Layers
+  // Render Markers, Pulsing Gauges, & Flood Hub Inundation Extent Circles
   useEffect(() => {
     const map = mapInstanceRef.current;
     if (!map) return;
 
-    // 1. Clear existing layers
+    // Clear existing layers
     markersRef.current.forEach((m) => m.remove());
     markersRef.current = [];
+    circlesRef.current.forEach((c) => c.remove());
+    circlesRef.current = [];
     infraMarkersRef.current.forEach((m) => m.remove());
     infraMarkersRef.current = [];
     citizenMarkersRef.current.forEach((m) => m.remove());
@@ -135,7 +146,7 @@ export default function Map({
 
     const bounds: L.LatLngExpression[] = [];
 
-    // Layer 1: IoT Sensor Villages
+    // Layer 1: Google Flood Hub Gauge Markers & Risk Inundation Extent Circles
     if (showIotSensors) {
       villages.forEach((village) => {
         if (!village.latitude || !village.longitude) return;
@@ -144,29 +155,56 @@ export default function Map({
         bounds.push([lat, lng]);
 
         let dotColor = '#16a34a';
-        let haloColor = 'rgba(22, 163, 74, 0.4)';
+        let circleColor = '#16a34a';
+        let radius = 2500;
 
         if (village.risk_status === 'CRITICAL') {
           dotColor = '#dc2626';
-          haloColor = 'rgba(220, 38, 38, 0.55)';
+          circleColor = '#dc2626';
+          radius = 6500;
         } else if (village.risk_status === 'HIGH') {
           dotColor = '#d97706';
-          haloColor = 'rgba(217, 119, 6, 0.45)';
+          circleColor = '#d97706';
+          radius = 4500;
         } else if (village.risk_status === 'MODERATE') {
           dotColor = '#ca8a04';
-          haloColor = 'rgba(202, 138, 4, 0.4)';
+          circleColor = '#ca8a04';
+          radius = 3200;
         }
 
+        // Draw Inundation Extent Risk Circles around critical nodes
+        if (showRiskCircles) {
+          const circle = L.circle([lat, lng], {
+            color: circleColor,
+            fillColor: circleColor,
+            fillOpacity: 0.18,
+            radius: radius,
+            weight: 1.5,
+          }).addTo(map);
+          circlesRef.current.push(circle);
+        }
+
+        // Google Flood Hub Pulsing SVG Gauge Marker Icon
+        const tel = Array.isArray(village.live_telemetry)
+          ? village.live_telemetry[0]
+          : (village.live_telemetry as TelemetryData) || {};
+
+        const gaugeHeight = tel.water_level ? `${tel.water_level.toFixed(0)}m` : 'Gage';
+
         const customIcon = L.divIcon({
-          className: 'custom-gis-marker',
+          className: 'google-flood-hub-marker',
           html: `
-            <div style="position: relative; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer;">
-              <div style="position: absolute; width: 28px; height: 28px; border-radius: 9999px; background: ${haloColor}; animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;"></div>
-              <div style="position: relative; width: 16px; height: 16px; border-radius: 9999px; background: ${dotColor}; border: 2px solid #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.3);"></div>
+            <div style="position: relative; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+              <div style="position: absolute; width: 36px; height: 36px; border-radius: 9999px; background: ${circleColor}33; animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;"></div>
+              <div style="position: relative; background: #ffffff; border: 2px solid ${dotColor}; border-radius: 12px; padding: 2px 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.25); display: flex; align-items: center; gap: 4px;">
+                <span style="width: 8px; height: 8px; border-radius: 9999px; background: ${dotColor};"></span>
+                <span style="font-size: 10px; font-weight: 800; color: #0f172a; font-family: sans-serif;">${village.name.substring(0, 10)}</span>
+                <span style="font-size: 9px; font-weight: 700; color: ${dotColor}; background: ${dotColor}15; padding: 1px 4px; border-radius: 4px;">${gaugeHeight}</span>
+              </div>
             </div>
           `,
-          iconSize: [32, 32],
-          iconAnchor: [16, 16],
+          iconSize: [120, 36],
+          iconAnchor: [60, 18],
         });
 
         const marker = L.marker([lat, lng], { icon: customIcon }).addTo(map);
@@ -179,7 +217,7 @@ export default function Map({
 
         markersRef.current.push(marker);
 
-        // Layer 3: Terrain-Aware Evacuation Polyline connecting to high ground
+        // Terrain-Aware Evacuation Polyline Overlay
         if (showEvacRoutes && village.risk_status === 'CRITICAL') {
           const highGroundLat = lat + 0.03;
           const highGroundLng = lng + 0.02;
@@ -192,8 +230,8 @@ export default function Map({
             ],
             {
               color: '#005a9c',
-              weight: 4,
-              dashArray: '6, 8',
+              weight: 4.5,
+              dashArray: '8, 8',
               opacity: 0.9,
             }
           ).addTo(map);
@@ -209,12 +247,12 @@ export default function Map({
         const infraIcon = L.divIcon({
           className: 'custom-infra-marker',
           html: `
-            <div style="background: #1e293b; color: #ffffff; padding: 4px 6px; border-radius: 6px; font-size: 10px; font-weight: bold; border: 1.5px solid #005a9c; box-shadow: 0 2px 6px rgba(0,0,0,0.3); display: flex; items-center; gap: 3px;">
+            <div style="background: #1e293b; color: #ffffff; padding: 4px 8px; border-radius: 8px; font-size: 10px; font-weight: 700; border: 1.5px solid #005a9c; box-shadow: 0 2px 6px rgba(0,0,0,0.3); display: flex; align-items: center; gap: 4px;">
               🏥 ${node.name}
             </div>
           `,
-          iconSize: [120, 24],
-          iconAnchor: [60, 12],
+          iconSize: [130, 24],
+          iconAnchor: [65, 12],
         });
         const m = L.marker([node.lat, node.lng], { icon: infraIcon }).addTo(map);
         infraMarkersRef.current.push(m);
@@ -230,7 +268,7 @@ export default function Map({
         const reportIcon = L.divIcon({
           className: 'custom-citizen-report-marker',
           html: `
-            <div style="background: #dc2626; color: #ffffff; padding: 3px 6px; border-radius: 9999px; font-size: 10px; font-weight: bold; border: 1.5px solid #ffffff; box-shadow: 0 2px 8px rgba(220,38,38,0.5);">
+            <div style="background: #dc2626; color: #ffffff; padding: 3px 8px; border-radius: 9999px; font-size: 10px; font-weight: bold; border: 1.5px solid #ffffff; box-shadow: 0 2px 8px rgba(220,38,38,0.5);">
               ⚠️ ${rep.type}
             </div>
           `,
@@ -253,7 +291,7 @@ export default function Map({
       const preset = STATE_CENTERS[selectedState];
       map.flyTo(preset.center, preset.zoom, { duration: 1.0 });
     }
-  }, [villages, selectedState, showIotSensors, showInfrastructure, showEvacRoutes, showCitizenReports]);
+  }, [villages, selectedState, showIotSensors, showRiskCircles, showInfrastructure, showEvacRoutes, showCitizenReports]);
 
   // Fly to village when selected externally
   useEffect(() => {
@@ -276,67 +314,77 @@ export default function Map({
     : null;
 
   return (
-    <div className="relative w-full h-[550px] rounded-2xl overflow-hidden border border-slate-300 shadow-md bg-slate-100">
+    <div className="relative w-full h-[580px] rounded-2xl overflow-hidden border border-slate-300 shadow-md bg-slate-100">
       {/* Map Canvas */}
       <div ref={mapContainerRef} className="w-full h-full z-10" />
 
-      {/* Floating Layer Controls Panel */}
-      <div className="absolute top-4 left-4 z-20 bg-white/95 border border-slate-200 backdrop-blur-md rounded-xl p-3 shadow-md space-y-2 text-xs">
-        <span className="font-bold text-slate-800 flex items-center gap-1.5 border-b border-slate-200 pb-1">
-          <Layers className="w-3.5 h-3.5 text-[#005a9c]" /> Map Layers
+      {/* Floating Google Flood Hub Usability Panel: Layers & Legends */}
+      <div className="absolute top-4 left-4 z-20 bg-white/95 border border-slate-200 backdrop-blur-md rounded-2xl p-3.5 shadow-md space-y-3 text-xs max-w-xs">
+        <span className="font-extrabold text-slate-900 flex items-center gap-1.5 border-b border-slate-200 pb-1.5 text-xs uppercase tracking-wider">
+          <Layers className="w-4 h-4 text-[#005a9c]" /> Flood Hub Layer Toggles
         </span>
 
-        <div className="space-y-1.5">
-          <label className="flex items-center gap-2 text-slate-700 font-semibold cursor-pointer">
+        <div className="space-y-2">
+          <label className="flex items-center gap-2 text-slate-800 font-semibold cursor-pointer">
             <input
               type="checkbox"
               checked={showIotSensors}
               onChange={(e) => setShowIotSensors(e.target.checked)}
-              className="accent-[#005a9c]"
+              className="accent-[#005a9c] w-3.5 h-3.5"
             />
-            <span>{t.iotLayer || 'IoT Sensors & Gauges'}</span>
+            <span>{t.iotLayer || 'IoT Gauges & River Stations'}</span>
           </label>
 
-          <label className="flex items-center gap-2 text-slate-700 font-semibold cursor-pointer">
+          <label className="flex items-center gap-2 text-slate-800 font-semibold cursor-pointer">
+            <input
+              type="checkbox"
+              checked={showRiskCircles}
+              onChange={(e) => setShowRiskCircles(e.target.checked)}
+              className="accent-[#005a9c] w-3.5 h-3.5"
+            />
+            <span>Flood Extent Inundation Circles</span>
+          </label>
+
+          <label className="flex items-center gap-2 text-slate-800 font-semibold cursor-pointer">
             <input
               type="checkbox"
               checked={showInfrastructure}
               onChange={(e) => setShowInfrastructure(e.target.checked)}
-              className="accent-[#005a9c]"
+              className="accent-[#005a9c] w-3.5 h-3.5"
             />
             <span>{t.infrastructureLayer || 'Critical Infrastructure'}</span>
           </label>
 
-          <label className="flex items-center gap-2 text-slate-700 font-semibold cursor-pointer">
+          <label className="flex items-center gap-2 text-slate-800 font-semibold cursor-pointer">
             <input
               type="checkbox"
               checked={showEvacRoutes}
               onChange={(e) => setShowEvacRoutes(e.target.checked)}
-              className="accent-[#005a9c]"
+              className="accent-[#005a9c] w-3.5 h-3.5"
             />
             <span>{t.evacuationRoutes || 'Evacuation Routes'}</span>
           </label>
 
-          <label className="flex items-center gap-2 text-slate-700 font-semibold cursor-pointer">
+          <label className="flex items-center gap-2 text-slate-800 font-semibold cursor-pointer">
             <input
               type="checkbox"
               checked={showCitizenReports}
               onChange={(e) => setShowCitizenReports(e.target.checked)}
-              className="accent-[#005a9c]"
+              className="accent-[#005a9c] w-3.5 h-3.5"
             />
             <span>{t.citizenReports || 'Citizen Reports'}</span>
           </label>
         </div>
       </div>
 
-      {/* Legend Badge */}
-      <div className="absolute top-4 right-4 z-20 bg-white/95 border border-slate-200 backdrop-blur-md rounded-full px-4 py-2 flex items-center gap-3 text-xs font-bold text-slate-700 shadow-md">
-        <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-red-600" /> Critical</span>
-        <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-amber-500" /> High</span>
-        <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-emerald-600" /> Safe</span>
+      {/* Severity Legend Badge */}
+      <div className="absolute top-4 right-4 z-20 bg-white/95 border border-slate-200 backdrop-blur-md rounded-full px-4 py-2 flex items-center gap-3 text-xs font-extrabold text-slate-800 shadow-md">
+        <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full bg-red-600" /> Critical</span>
+        <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full bg-amber-500" /> High</span>
+        <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full bg-emerald-600" /> Safe</span>
       </div>
 
-      {/* Translated Light-Mode Marker Popup Overlay */}
+      {/* Google Flood Hub Marker Popup Overlay */}
       {activePopupVillage && (
         <div className="absolute bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-[420px] z-30 bg-white border border-slate-300 rounded-2xl p-5 shadow-2xl text-slate-900 animate-in fade-in slide-in-from-bottom-4 duration-200 max-h-[460px] overflow-y-auto">
           <div className="flex items-start justify-between border-b border-slate-200 pb-3">
@@ -398,7 +446,7 @@ export default function Map({
           {/* Action Button */}
           <button
             onClick={() => setActiveEvacPath(activePopupVillage.alternate_routes?.[0] || 'Ridge High Road')}
-            className="w-full py-2 bg-[#005a9c] hover:bg-blue-800 text-white rounded-xl font-bold text-xs shadow-xs flex items-center justify-center gap-2 mt-2 transition"
+            className="w-full py-2.5 bg-[#005a9c] hover:bg-blue-800 text-white rounded-xl font-bold text-xs shadow-xs flex items-center justify-center gap-2 mt-2 transition"
           >
             <Navigation className="w-3.5 h-3.5" />
             <span>{t.startEvacuation || 'Start Safe Route Evacuation'}</span>
