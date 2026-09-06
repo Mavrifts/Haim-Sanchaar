@@ -166,7 +166,10 @@ export default function DashboardLayout({
               </button>
             </li>
             <li>
-              <Link href="/emergency" className="block py-3 px-4 hover:bg-blue-800 transition-colors">
+              <Link 
+                href="/emergency" 
+                className="block py-3 px-4 hover:bg-blue-800 transition-colors hover:text-amber-300 transition-colors"
+              >
                 {t.navDirectives || 'Emergency Directives'}
               </Link>
             </li>
