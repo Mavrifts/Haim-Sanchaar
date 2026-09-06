@@ -26,6 +26,7 @@ import {
 import SectorSelector from '@/components/SectorSelector';
 export default function TelemetryPage() {
   const { selectedState, t } = useAppState();
+  const activeState = selectedState || 'Himachal Pradesh';
   const [data, setData] = useState<DashboardResponse | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [isPending, startTransition] = useTransition();
@@ -39,8 +40,8 @@ export default function TelemetryPage() {
     setLoading(true);
     startTransition(async () => {
       try {
-        const res = await getVillagesByState(stateToLoad);
-        setData(res);
+        const res = await getVillagesByState(stateToLoad || 'Himachal Pradesh');
+        setData(res.villages.length > 0 ? res : await getVillagesByState('ALL'));
       } catch (err) {
         console.error('Error fetching telemetry data:', err);
       } finally {
@@ -52,8 +53,8 @@ export default function TelemetryPage() {
   };
 
   useEffect(() => {
-    loadData(selectedState);
-  }, [selectedState]);
+    loadData(activeState);
+  }, [activeState]);
 
   const handleDispatchQRT = async (village: any) => {
     setDispatchStates((prev) => ({ ...prev, [village.id]: 'loading' }));
@@ -113,7 +114,7 @@ export default function TelemetryPage() {
             <ActivityIcon className="w-6 h-6 text-[#0071E3]" /> Live Hydrological Telemetry
           </h1>
           <p className="text-xs text-[#86868B] mt-0.5">
-            Real-time sensory inputs from mountain basins across {selectedState}. Evaluate water level trends and land slip metrics before triggering QRT deployment.
+            Real-time sensory inputs from mountain basins across {activeState}. Evaluate water level trends and land slip metrics before triggering QRT deployment.
           </p>
         </div>
 
@@ -131,7 +132,7 @@ export default function TelemetryPage() {
           </div>
 
           <button
-            onClick={() => loadData(selectedState)}
+            onClick={() => loadData(activeState)}
             disabled={loading || isPending}
             className="rounded-full px-4 py-1.5 text-xs font-semibold bg-white hover:bg-neutral-50 text-[#1D1D1F] border border-black/[0.08] shadow-xs transition-all active:scale-95 flex items-center gap-2 cursor-pointer disabled:opacity-50"
           >
@@ -156,7 +157,7 @@ export default function TelemetryPage() {
             <Layers className="w-4 h-4 text-[#86868B]" /> Sensor Telemetry & Soil Hydration Matrix
           </h2>
           <span className="text-[11px] text-[#86868B]">
-            Region: <strong className="text-[#1D1D1F]">{selectedState}</strong>
+            Region: <strong className="text-[#1D1D1F]">{activeState}</strong>
           </span>
         </div>
 

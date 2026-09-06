@@ -20,6 +20,7 @@ const Map = dynamic(() => import('@/components/Map'), {
 
 export default function LiveMapPage() {
   const { selectedState, t } = useAppState();
+  const activeState = selectedState || 'Himachal Pradesh';
   const [data, setData] = useState<DashboardResponse | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [isPending, startTransition] = useTransition();
@@ -29,8 +30,8 @@ export default function LiveMapPage() {
     setLoading(true);
     startTransition(async () => {
       try {
-        const res = await getVillagesByState(stateToLoad);
-        setData(res);
+        const res = await getVillagesByState(stateToLoad || 'Himachal Pradesh');
+        setData(res.villages.length > 0 ? res : await getVillagesByState('ALL'));
       } catch (err) {
         console.error('Error fetching map data:', err);
       } finally {
@@ -40,9 +41,9 @@ export default function LiveMapPage() {
   };
 
   useEffect(() => {
-    loadData(selectedState);
+    loadData(activeState);
     setSelectedVillage(null);
-  }, [selectedState]);
+  }, [activeState]);
 
   const villages = data?.villages || [];
 
@@ -58,7 +59,7 @@ export default function LiveMapPage() {
             <MapIcon className="w-6 h-6 text-[#0071E3]" /> {t.map}
           </h1>
           <p className="text-xs text-[#86868B] mt-0.5">
-            Interactive OpenStreetMap plotting coordinates for {selectedState}. Click any sensor node/circle marker to generate Gemini AI evacuation directives, route suggestions, and helplines.
+            Interactive OpenStreetMap plotting coordinates for {activeState}. Click any sensor node/circle marker to generate Gemini AI evacuation directives, route suggestions, and helplines.
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -66,7 +67,7 @@ export default function LiveMapPage() {
             {villages.length} {t.activeSensors}
           </span>
           <button
-            onClick={() => loadData(selectedState)}
+            onClick={() => loadData(activeState)}
             disabled={loading || isPending}
             className="rounded-full px-4 py-1.5 text-xs font-semibold bg-white hover:bg-neutral-50 text-[#1D1D1F] border border-black/[0.08] shadow-xs transition-all active:scale-95 flex items-center gap-2 cursor-pointer disabled:opacity-50"
           >
@@ -80,7 +81,7 @@ export default function LiveMapPage() {
         <Map
           villages={villages}
           selectedVillage={selectedVillage}
-          selectedState={selectedState}
+          selectedState={activeState}
           onSelectVillage={(v: VillageData | null) => setSelectedVillage(v)}
           t={t}
         />

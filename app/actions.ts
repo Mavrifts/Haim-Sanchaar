@@ -70,10 +70,14 @@ export async function fetchTelemetryData() {
   return MULTI_STATE_LOCATIONS;
 }
 
-export async function getVillagesByState(state: string): Promise<DashboardResponse> {
-  const filtered = (!state || state === 'ALL')
+export async function getVillagesByState(selectedState?: string): Promise<DashboardResponse> {
+  const filtered = (!selectedState || selectedState === 'ALL' || selectedState.toLowerCase() === 'all')
     ? MULTI_STATE_LOCATIONS
-    : MULTI_STATE_LOCATIONS.filter(item => item.state.toLowerCase() === state.toLowerCase());
+    : MULTI_STATE_LOCATIONS.filter((item) => {
+        const cleanTarget = selectedState.toLowerCase().replace(/[^a-z]/g, '');
+        const cleanItemState = item.state.toLowerCase().replace(/[^a-z]/g, '');
+        return cleanItemState.includes(cleanTarget) || cleanTarget.includes(cleanItemState);
+      });
 
   const villages: VillageData[] = filtered.map(loc => ({
     ...loc,
@@ -90,7 +94,7 @@ export async function getVillagesByState(state: string): Promise<DashboardRespon
 
   return {
     villages,
-    evacuationSummary: `Evacuation advisory active for ${!state || state === 'ALL' ? 'all mountain hazard sectors' : state}.`,
+    evacuationSummary: `Evacuation advisory active for ${!selectedState || selectedState.toLowerCase() === 'all' ? 'all mountain hazard sectors' : selectedState}.`,
     totalPopulationAtRisk: villages.length * 1420,
     totalActiveSensors: villages.length,
     criticalAlertsCount: villages.filter(v => v.risk_status === 'CRITICAL').length,
