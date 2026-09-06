@@ -973,29 +973,30 @@ export async function dispatchQRT(payload: {
 
 export const DATA_SOURCES_PROVENANCE = [
   {
-    name: 'Central Water Commission (CWC)',
-    url: 'https://cwc.gov.in',
+    name: 'Central Water Commission (CWC Flood Forecast)',
+    url: 'https://ffs.rcmcwc.org',
     type: 'Hydrological River Gauge Telemetry',
   },
   {
-    name: 'India Meteorological Department (IMD)',
+    name: 'India Meteorological Department (IMD Weather)',
     url: 'https://mausam.imd.gov.in',
     type: 'Radar Precipitation & Cloudburst Warning',
+  },
+  {
+    name: 'NDMA SACHET Early Warning Portal',
+    url: 'https://sachet.ndma.gov.in',
+    type: 'Common Alerting Protocol (CAP) Dissemination',
+  },
+  {
+    name: 'Open-Meteo Global Flood API',
+    url: 'https://open-meteo.com',
+    type: 'Global River Discharge Hydrological Models',
   },
   {
     name: 'ISRO Bhuvan Geo-Spatial Platform',
     url: 'https://bhuvan.nrsc.gov.in',
     type: 'Satellite Runoff & Soil Saturation Data',
   },
-  {
-    name: 'Open-Meteo Global Flood API',
-    url: 'https://open-meteo.com/en/docs/flood-api',
-    type: 'Global River Discharge Hydrological Models',
-  },
-  {
-    name: 'Supabase Real-Time Hydration Database',
-    url: 'https://supabase.com',
-    type: 'IoT Hydrological Sensor Data Store',
-  },
 ];
+
 

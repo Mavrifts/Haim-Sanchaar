@@ -1,4 +1,3 @@
-mkdir -p utils && cat << 'EOF' > utils/floodApi.ts
 export interface RiverForecastResult {
   latitude: number;
   longitude: number;
@@ -42,4 +41,3 @@ export async function fetchOpenMeteoFloodForecast(lat: number, lon: number): Pro
     };
   }
 }
-EOF
