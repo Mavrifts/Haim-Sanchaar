@@ -71,13 +71,15 @@ export async function fetchTelemetryData() {
 }
 
 export async function getVillagesByState(selectedState?: string): Promise<DashboardResponse> {
-  const filtered = (!selectedState || selectedState === 'ALL' || selectedState.toLowerCase() === 'all')
-    ? MULTI_STATE_LOCATIONS
-    : MULTI_STATE_LOCATIONS.filter((item) => {
-        const cleanTarget = selectedState.toLowerCase().replace(/[^a-z]/g, '');
-        const cleanItemState = item.state.toLowerCase().replace(/[^a-z]/g, '');
-        return cleanItemState.includes(cleanTarget) || cleanTarget.includes(cleanItemState);
-      });
+  let filtered = MULTI_STATE_LOCATIONS;
+  if (selectedState && selectedState !== 'ALL' && selectedState.toLowerCase() !== 'all') {
+    const cleanTarget = selectedState.toLowerCase().replace(/[^a-z]/g, '');
+    const results = MULTI_STATE_LOCATIONS.filter((item) => {
+      const cleanItemState = item.state.toLowerCase().replace(/[^a-z]/g, '');
+      return cleanItemState.includes(cleanTarget) || cleanTarget.includes(cleanItemState);
+    });
+    filtered = results.length > 0 ? results : MULTI_STATE_LOCATIONS;
+  }
 
   const villages: VillageData[] = filtered.map(loc => ({
     ...loc,

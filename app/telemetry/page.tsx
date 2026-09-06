@@ -99,11 +99,15 @@ export default function TelemetryPage() {
   const villages = data?.villages || [];
   
   // Filter villages based on search query
-  const filteredVillages = villages.filter((v) =>
-    v.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    v.district.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    v.river_basin.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredVillages = villages.filter((v) => {
+    if (!searchQuery || searchQuery.trim() === '') return true;
+    const term = searchQuery.toLowerCase();
+    return (
+      v.name.toLowerCase().includes(term) ||
+      v.district.toLowerCase().includes(term) ||
+      v.state.toLowerCase().includes(term)
+    );
+  });
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
