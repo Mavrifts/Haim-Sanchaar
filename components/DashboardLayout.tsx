@@ -130,23 +130,7 @@ export default function DashboardLayout({
           </div>
         </div>
 
-        {/* Minister Card with Portrait */}
-        <div className="flex items-center gap-3 bg-blue-50 border-l-4 border-[#005a9c] p-2 rounded shadow-xs shrink-0">
-          <img
-            src="https://www.mha.gov.in/sites/default/files/styles/small_50x50/public/2023-08/AmitShah_Official.jpg"
-            alt="Shri Amit Shah"
-            className="w-10 h-10 rounded-full object-cover border-2 border-blue-600"
-            onError={(e) => {
-              (e.target as HTMLImageElement).src = 'https://upload.wikimedia.org/wikipedia/commons/0/07/Amit_Shah_in_2024.jpg';
-            }}
-          />
-          <div className="text-left">
-            <p className="text-xs md:text-sm font-bold text-blue-950">
-              {t.minister || "Shri Amit Shah — Hon'ble Union Minister of Home Affairs"}
-            </p>
-            <p className="text-[10px] text-blue-800 font-medium">{t.helpline || 'MHA Helpline: 011-23438252'}</p>
-          </div>
-        </div>
+        {/* Removed minister portrait block as per instruction */}
       </header>
 
       {/* Navigation Bar */}

@@ -1,12 +1,11 @@
 'use client';
 
 import React, { useState } from 'react';
-import { MapContainer, TileLayer, Marker } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { VillageData } from '@/app/actions';
-import { X } from 'lucide-react';
-import { useAppState } from '@/context/StateContext';
+import { X, AlertTriangle, Shield, Navigation } from 'lucide-react';
 
 // Fix default Leaflet marker icon paths for Next.js
 const customIcon = L.icon({
@@ -34,14 +33,11 @@ export default function Map({
   sensors,
   onSelectVillage,
 }: MapProps) {
-  const [activePopupVillage, setActivePopupVillage] = useState<VillageData | null>(null);
-  const [aiDirectives, setAiDirectives] = useState<Record<string | number, string>>({});
-
   return (
-    <div className="relative w-full h-[600px] border border-slate-200 rounded-2xl overflow-hidden">
+    <div className="relative w-full h-[600px] border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
       <MapContainer 
         center={[31.1, 77.1]} 
-        zoom={8} 
+        zoom={6} 
         style={{ height: '100%', width: '100%' }}
       >
         <TileLayer
@@ -51,27 +47,27 @@ export default function Map({
         {villages.map((v) => (
           <Marker 
             key={v.id} 
-            position={[v.lat, v.lon]} 
+            position={[v.latitude, v.longitude]} 
             icon={customIcon}
-            eventHandlers={{
-                click: () => setActivePopupVillage(v)
-            }}
-          />
+          >
+            <Popup className="custom-popup" minWidth={250}>
+              <div className="p-2">
+                <h3 className="font-bold text-sm text-slate-900 mb-1">{v.name}</h3>
+                <div className="space-y-1.5 text-xs text-slate-600">
+                    <p className="flex items-center gap-1"><strong>Status:</strong> <span className={`px-1.5 py-0.5 rounded-full ${v.risk_status === 'CRITICAL' ? 'bg-red-100 text-red-700' : v.risk_status === 'WARNING' ? 'bg-amber-100 text-amber-700' : 'bg-green-100 text-green-700'}`}>{v.risk_status}</span></p>
+                    <p><strong>District:</strong> {v.district}</p>
+                    <p><strong>River Basin:</strong> {v.river_basin}</p>
+                    {v.ai_directive && (
+                        <div className="mt-2 p-2 bg-blue-50 border border-blue-100 rounded text-[10px] text-blue-800">
+                            <strong>AI Directive:</strong> {v.ai_directive}
+                        </div>
+                    )}
+                </div>
+              </div>
+            </Popup>
+          </Marker>
         ))}
       </MapContainer>
-        
-        {activePopupVillage && (
-            <div className="absolute top-4 right-4 z-[1000] bg-white p-4 rounded-xl shadow-lg w-72 border border-slate-200">
-                <div className="flex justify-between items-start mb-2">
-                    <h3 className="font-bold text-sm">{activePopupVillage.name}</h3>
-                    <button onClick={() => setActivePopupVillage(null)}><X className="w-4 h-4" /></button>
-                </div>
-                <p className="text-xs mb-2">Risk: {activePopupVillage.risk_status}</p>
-                <div className="p-2 bg-blue-50 text-xs rounded border border-blue-100">
-                    {activePopupVillage.risk_status} - Directive: {aiDirectives[activePopupVillage.id] || "Calculating..."}
-                </div>
-            </div>
-        )}
     </div>
   );
 }
