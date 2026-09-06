@@ -76,28 +76,9 @@ export const MULTI_STATE_FALLBACK: VillageData[] = [
   { id: 'JK-ANT-02', name: 'Anantnag Riverbed', district: 'Anantnag', state: 'Jammu & Kashmir', population: 6000, river_basin: 'Jhelum', latitude: 33.7275, longitude: 75.1492, risk_status: 'WARNING', evacuation_status: 'STANDBY', assigned_battalion: '13th Bn NDRF', safe_shelter: 'Anantnag Hillocks', alternate_routes: ['NH-44'], places_you_can_wait: ['Anantnag Stadium'], emergency_numbers: ['1078'] },
   { id: 'JK-BRM-03', name: 'Baramulla Banks', district: 'Baramulla', state: 'Jammu & Kashmir', population: 4500, river_basin: 'Jhelum', latitude: 34.2017, longitude: 74.3551, risk_status: 'NORMAL', evacuation_status: 'MONITORING', assigned_battalion: '13th Bn NDRF', safe_shelter: 'Baramulla Plateau', alternate_routes: ['NH-1'], places_you_can_wait: ['Baramulla High Ground'], emergency_numbers: ['1078'] },
   { id: 'JK-JAM-04', name: 'Jammu Tawi Front', district: 'Jammu', state: 'Jammu & Kashmir', population: 15000, river_basin: 'Tawi', latitude: 32.7266, longitude: 74.8570, risk_status: 'WARNING', evacuation_status: 'STANDBY', assigned_battalion: '13th Bn NDRF', safe_shelter: 'Jammu Fort Heights', alternate_routes: ['NH-44'], places_you_can_wait: ['Jammu University Campus'], emergency_numbers: ['1078'] },
+  { id: 'HP-02', name: 'Pandoh Lowlands & Aut Sector', district: 'Mandi', state: 'Himachal Pradesh', population: 15800, river_basin: 'Beas River / Pandoh Catchment', latitude: 31.6700, longitude: 77.0600, risk_status: 'CRITICAL', evacuation_status: 'MANDATORY EVACUATION', assigned_battalion: '14th Bn NDRF & SDRF Mandi Taskforce', safe_shelter: 'Govt Post-Graduate College Mandi High Grounds', alternate_routes: ['NH-21 Kataula-Kullu High Elevation Route', 'Baggi-Sundernagar Link Bypass', 'Chail Chowk Upper Mountain Road'], places_you_can_wait: ['Govt College Mandi High Auditorium'], emergency_numbers: ['1078'] }
 ];
-  },
-  {
-    id: 'HP-02',
-    name: 'Pandoh Lowlands & Aut Sector',
-    district: 'Mandi',
-    state: 'Himachal Pradesh',
-    population: 15800,
-    river_basin: 'Beas River / Pandoh Catchment',
-    latitude: 31.6700,
-    longitude: 77.0600,
-    risk_status: 'CRITICAL',
-    evacuation_status: 'MANDATORY EVACUATION',
-    assigned_battalion: '14th Bn NDRF & SDRF Mandi Taskforce',
-    safe_shelter: 'Govt Post-Graduate College Mandi High Grounds',
-    alternate_routes: [
-      'NH-21 Kataula-Kullu High Elevation Route',
-      'Baggi-Sundernagar Link Bypass',
-      'Chail Chowk Upper Mountain Road',
-    ],
-    places_you_can_wait: [
-      'Govt College Mandi High Auditorium',
+
       'Pandoh Dam Upper Crest Area',
       'Sundernagar Polytechnic High Grounds',
     ],
