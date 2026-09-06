@@ -1,3 +1,4 @@
+mkdir -p app/emergency && cat << 'EOF' > app/emergency/page.tsx
 'use client';
 
 import React from 'react';
@@ -36,3 +37,4 @@ export default function EmergencyPage() {
     </DashboardLayout>
   );
 }
+EOF

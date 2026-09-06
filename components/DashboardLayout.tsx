@@ -330,3 +330,109 @@ export default function DashboardLayout({
     </div>
   );
 }
+cat << 'EOF' > components/DashboardLayout.tsx
+'use client';
+
+import React, { useState } from 'react';
+import Link from 'next/link';
+import { useAppState } from '@/context/StateContext';
+
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const { language, setLanguage, t } = useAppState();
+  const [showDataModal, setShowDataModal] = useState(false);
+
+  return (
+    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans antialiased">
+      <div className="h-1 bg-amber-500 w-full" />
+
+      {/* Official MHA Government Header */}
+      <header className="bg-white border-b border-slate-300 px-6 py-3 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div className="flex items-center gap-4">
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg"
+            alt="State Emblem of India"
+            className="w-10 h-14 object-contain"
+          />
+          <div>
+            <p className="text-[10px] tracking-wider uppercase font-bold text-slate-500">
+              {t.subtitle || 'DISASTER MANAGEMENT DIVISION | MINISTRY OF HOME AFFAIRS'}
+            </p>
+            <h1 className="text-2xl font-black tracking-tight text-slate-900 flex items-center gap-2">
+              {t.portalTitle || 'HEM SANCHAR'} <span className="text-sm font-normal text-slate-600">(हेम संचार)</span>
+            </h1>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2.5 bg-slate-50 border border-slate-200 p-1.5 rounded shadow-sm">
+            <img
+              src="https://www.mha.gov.in/sites/default/files/styles/small_50x50/public/2023-08/AmitShah_Official.jpg"
+              alt="Shri Amit Shah - Hon'ble Union Home Minister"
+              className="w-10 h-12 object-cover rounded border border-slate-300"
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = 'https://upload.wikimedia.org/wikipedia/commons/0/07/Amit_Shah_in_2024.jpg';
+              }}
+            />
+            <div className="hidden sm:block">
+              <p className="text-xs font-bold text-slate-900 leading-tight">Shri Amit Shah</p>
+              <p className="text-[10px] text-slate-600">Hon'ble Union Minister of Home Affairs</p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-1.5 bg-slate-100 border border-slate-300 rounded px-2.5 py-1.5">
+            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Lang:</span>
+            <select
+              value={language}
+              onChange={(e) => setLanguage(e.target.value)}
+              className="bg-transparent text-slate-800 text-xs font-bold focus:outline-none cursor-pointer"
+            >
+              <option value="en">English</option>
+              <option value="hi">हिन्दी (Hindi)</option>
+              <option value="doi">डोगरी (Dogri)</option>
+              <option value="ks">कश्मीरी (Kashmiri)</option>
+              <option value="lb">लाद्दाखी (Ladakhi)</option>
+              <option value="pa">पहाड़ी (Pahari)</option>
+              <option value="gbm">गढ़वाली (Garhwali)</option>
+              <option value="bn">বাংলা (Bengali)</option>
+            </select>
+          </div>
+        </div>
+      </header>
+
+      <nav className="bg-[#005a9c] text-white px-6 py-2 flex flex-wrap items-center justify-between text-xs font-medium shadow-sm">
+        <div className="flex items-center gap-6">
+          <Link href="/" className="hover:text-amber-300 transition-colors font-semibold">
+            {t.dashboard || 'Home Dashboard'}
+          </Link>
+          <Link href="/map" className="hover:text-amber-300 transition-colors">
+            {t.map || 'Live GIS Map'}
+          </Link>
+          <Link href="/telemetry" className="hover:text-amber-300 transition-colors">
+            {t.telemetry || 'Telemetry Data'}
+          </Link>
+          <button
+            onClick={() => setShowDataModal(true)}
+            className="hover:text-amber-300 transition-colors cursor-pointer"
+          >
+            {t.dataSources || 'Data Sources'}
+          </button>
+          <Link href="/emergency" className="hover:text-amber-300 transition-colors">
+            {t.emergencyDirectives || 'Emergency Directives'}
+          </Link>
+        </div>
+
+        <div className="hidden sm:block text-[11px] text-amber-200 font-mono">
+          MHA: 011-23438252 | NDRF: 1078 | SEOC: 1070
+        </div>
+      </nav>
+
+      <main className="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6">{children}</main>
+
+      <footer className="bg-slate-900 text-slate-300 border-t border-slate-800 text-xs py-4 px-6 text-center mt-auto">
+        <p>Designed, Developed, and Maintained for High-Altitude Disaster Mitigation | Hem Sanchar Telemetry Network</p>
+        <p className="text-neutral-400 text-[11px] mt-1">Developed with ❤️ by Team Power Puff Girls | Smart India Hackathon 2026</p>
+      </footer>
+    </div>
+  );
+}
+EOF
