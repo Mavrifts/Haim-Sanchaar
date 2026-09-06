@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import DashboardLayout from '@/components/DashboardLayout';
 import { useAppState } from '@/context/StateContext';
 
 export default function AlertsPage() {
@@ -19,23 +18,21 @@ export default function AlertsPage() {
   ];
 
   return (
-    <DashboardLayout>
-      <div className="space-y-6">
-        <h1 className="text-2xl font-bold text-slate-900">{t.emergencyDirectives || 'Emergency Helpline Directory'}</h1>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {HELPLINES.map((h, i) => (
-            <div key={i} className="bg-white p-4 border border-slate-300 rounded shadow-sm flex justify-between items-center">
-              <div>
-                <p className="font-bold text-slate-800 text-sm">{h.agency}</p>
-              </div>
-              <div className="text-right">
-                <p className="text-base font-mono font-black text-rose-700">{h.number}</p>
-                <p className="text-[10px] text-slate-400">{h.alt}</p>
-              </div>
+    <div className="space-y-6">
+      <h1 className="text-2xl font-bold text-slate-900">{t.emergencyDirectives || 'Emergency Helpline Directory'}</h1>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {HELPLINES.map((h, i) => (
+          <div key={i} className="bg-white p-4 border border-slate-300 rounded shadow-sm flex justify-between items-center">
+            <div>
+              <p className="font-bold text-slate-800 text-sm">{h.agency}</p>
             </div>
-          ))}
-        </div>
+            <div className="text-right">
+              <p className="text-base font-mono font-black text-rose-700">{h.number}</p>
+              <p className="text-[10px] text-slate-400">{h.alt}</p>
+            </div>
+          </div>
+        ))}
       </div>
-    </DashboardLayout>
+    </div>
   );
 }
