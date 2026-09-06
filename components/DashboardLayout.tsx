@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { useAppState } from '@/context/StateContext';
 
@@ -12,6 +12,7 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const { language, setLanguage, t } = useAppState();
+  const [isDataModalOpen, setIsDataModalOpen] = useState(false);
 
 
   // ... [Keep existing handleReportSubmit logic]
