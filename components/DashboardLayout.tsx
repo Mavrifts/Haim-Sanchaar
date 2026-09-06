@@ -43,7 +43,6 @@ export default function DashboardLayout({
             <option value="bn">বাংলা (Bengali)</option>
           </select>
         </div>
-      </div>
 
       {/* MHA Header */}
       <header className="bg-white py-4 px-4 md:px-8 flex flex-col md:flex-row items-center justify-between border-b-4 border-[#005a9c] shadow-xs gap-4">
@@ -88,13 +87,6 @@ export default function DashboardLayout({
             <li>
               <Link href="/telemetry" className="block py-3 px-4 hover:bg-blue-800 transition-colors">
                 {t.navTelemetry || 'Telemetry Data'}
-              </Link>
-            </li>
-            <li>
-
-            <li>
-              <Link href="/emergency" className="block py-3 px-4 hover:bg-blue-800 transition-colors">
-                Emergency Directory
               </Link>
             </li>
             <li>
