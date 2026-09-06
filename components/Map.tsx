@@ -11,16 +11,22 @@ interface MapProps {
   villages: VillageData[];
   selectedVillage?: VillageData | null;
   selectedState?: string;
+  t?: Record<string, string>;
+  sensors?: any[];
+  onSelectVillage?: (v: VillageData | null) => void;
 }
 
 export default function Map({
-  villages,
+  villages = [],
   selectedVillage,
   selectedState = 'Himachal Pradesh',
+  t,
+  sensors,
+  onSelectVillage,
 }: MapProps) {
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
-  const { mode, t } = useAppState();
+  const { mode, t: contextT } = useAppState();
 
   const [activePopupVillage, setActivePopupVillage] = useState<VillageData | null>(null);
   const [aiDirectives, setAiDirectives] = useState<Record<string | number, string>>({});

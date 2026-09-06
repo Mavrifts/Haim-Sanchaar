@@ -81,7 +81,7 @@ export default function LiveMapPage() {
           villages={villages}
           selectedVillage={selectedVillage}
           selectedState={selectedState}
-          onSelectVillage={(v) => setSelectedVillage(v)}
+          onSelectVillage={(v: VillageData | null) => setSelectedVillage(v)}
           t={t}
         />
       </div>
